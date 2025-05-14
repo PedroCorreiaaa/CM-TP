@@ -1,0 +1,26 @@
+# Kotlin build
+/build
+/bin
+
+# Gradle
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+*.iml
+.idea/
+*.ipr
+*.iws
+out/
+
+# Kotlin specific (if you generate kotlin build output manually)
+*.class
+*.kt.class
+*.kts.class
+
+# Caches
+.cache/
+*.tmp
