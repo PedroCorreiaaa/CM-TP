@@ -1,6 +1,7 @@
 # Kotlin build
 /build
 /bin
+node_modules/
 
 # Gradle
 .gradle
