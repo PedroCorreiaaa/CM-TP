@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txtTotalAvarias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total de Avarias: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtTempoMedio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tempo Médio de Resolução: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtResolvidas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Avarias Resolvidas: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+    </LinearLayout>
+</ScrollView>

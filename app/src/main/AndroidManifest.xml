@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +31,7 @@
         <activity android:name=".ui.home.user.HomeUserActivity" />
         <activity android:name=".ui.home.tecnico.HomeTecnicoActivity" />
         <activity android:name=".ui.home.gestor.HomeGestorActivity" />
-
+        <activity android:name=".ui.relatorios.RelatorioActivity" />
     </application>
 
 </manifest>
