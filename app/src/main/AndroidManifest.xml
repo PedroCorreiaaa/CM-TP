@@ -17,9 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -32,6 +30,7 @@
         <activity android:name=".ui.home.tecnico.HomeTecnicoActivity" />
         <activity android:name=".ui.home.gestor.HomeGestorActivity" />
         <activity android:name=".ui.relatorios.RelatorioActivity" />
+        <activity android:name=".ui.avaria.registar.RegistarAvariaActivity" />
+        <activity android:name=".ui.avaria.monitorizar.MonitorizarAvariaActivity" />
     </application>
-
 </manifest>

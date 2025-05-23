@@ -1,5 +1,7 @@
 package pt.techcare.app.data.api
 
+import pt.techcare.app.data.model.Avaria
+import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.model.Comentario
 import pt.techcare.app.data.model.ComentarioRequest
 import pt.techcare.app.data.model.LoginRequest
@@ -19,6 +21,12 @@ interface ApiService {
 
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<LoginResponse>
+
+    @GET("avarias")
+    suspend fun getAvarias(): Response<List<Avaria>>
+
+    @POST("avarias")
+    suspend fun registarAvaria(@Body avaria: AvariaRequest): Response<Void>
 
     @GET("avarias/{id}/comentarios")
     suspend fun getComentarios(@Path("id") idAvaria: Int): Response<List<Comentario>>

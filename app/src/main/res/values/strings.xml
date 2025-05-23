@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TechCare</string>
+    <string name="titulo_registo_avaria">Registar nova avaria</string>
+    <string name="hint_tipo_equipamento">Tipo de equipamento</string>
+    <string name="hint_localizacao">Localização</string>
+    <string name="hint_descricao">Descrição do Problema</string>
+    <string name="label_prioridade">Prioridade</string>
+    <string name="btn_submeter">Submeter Avaria</string>
 </resources>

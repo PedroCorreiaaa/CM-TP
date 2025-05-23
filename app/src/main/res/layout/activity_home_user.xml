@@ -56,7 +56,7 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_engrenagem" />
+                android:src="@drawable/ic_engrenagem_blue" />
 
             <TextView
                 android:layout_width="0dp"
@@ -89,7 +89,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_add" />
+                    android:src="@drawable/ic_add_blue" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -98,6 +98,8 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
@@ -114,15 +116,17 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_monitor" />
+                    android:src="@drawable/ic_monitor_blue" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monitorização de Avarias"
+                    android:text="Monitorização"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
@@ -139,7 +143,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_bell" />
+                    android:src="@drawable/ic_bell_blue" />
 
                 <TextView
                     android:layout_width="wrap_content"
