@@ -19,7 +19,6 @@ class HomeTecnicoActivity : AppCompatActivity() {
         val sessionManager = SessionManager(this)
         val nome = sessionManager.getUserName() ?: "Técnico"
 
-        binding.txtWelcome.text = "Bem-vindo, $nome 👷"
 
         binding.btnLogout.setOnClickListener {
             sessionManager.clearSession()

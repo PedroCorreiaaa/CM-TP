@@ -19,7 +19,6 @@ class HomeGestorActivity : AppCompatActivity() {
 
         val sessionManager = SessionManager(this)
         val nome = sessionManager.getUserName() ?: "Gestor"
-        binding.txtWelcome.text = "Bem-vindo, $nome 🧑‍💼"
 
         binding.btnLogout.setOnClickListener {
             sessionManager.clearSession()
