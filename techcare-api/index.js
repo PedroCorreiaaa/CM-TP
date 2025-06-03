@@ -312,6 +312,50 @@ app.post("/api/tecnicos", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT DISTINCT n.*
+      FROM notificacao n
+      JOIN avaria a ON n.id_avaria = a.id_avaria
+      LEFT JOIN atribuir_tecnico at ON a.id_avaria = at.id_avaria
+      WHERE a.id_utilizador = $1 OR at.id_utilizador = $1
+      ORDER BY n.data_notificacao DESC
+    `, [id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erro ao obter notificações." });
+  }
+});
+
+app.post("/api/notificacoes", verifyToken, async (req, res) => {
+  const { id_avaria, mensagem } = req.body;
+
+  if (!id_avaria || !mensagem) {
+    return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem)." });
+  }
+
+  try {
+    const result = await pool.query(`
+      INSERT INTO notificacao (id_avaria, mensagem)
+      VALUES ($1, $2)
+      RETURNING *
+    `, [id_avaria, mensagem]);
+
+    res.status(201).json({
+      success: true,
+      notificacao: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erro ao criar notificação." });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`Servidor a correr em http://localhost:${PORT}`)
