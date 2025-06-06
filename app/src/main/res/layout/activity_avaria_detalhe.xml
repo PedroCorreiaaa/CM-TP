@@ -17,7 +17,7 @@
         android:id="@+id/etNovoComentario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Escreve um comentário..."
+        android:hint="@string/hint_comentario"
         android:background="@drawable/edit_text_bg"
         android:padding="12dp" />
 
@@ -25,7 +25,7 @@
         android:id="@+id/btnEnviarComentario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enviar Comentário"
+        android:text="@string/btn_enviar_comentario"
         android:textColor="@android:color/white"
         android:layout_marginTop="8dp"
         android:background="@drawable/button_blue" />

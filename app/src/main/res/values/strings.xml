@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TechCare</string>
-    <string name="app_slogan">Simplifica a gestão, acelera a solução</string>
+    <string name="app_slogan">Simplifica a gestão, acelera a solução!</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Palavra-passe</string>
     <string name="sem_conta">Não tem conta?</string>
@@ -29,6 +29,7 @@
     <string name="hint_descricao_avaria">Descrição</string>
     <string name="hint_estado_avaria">Estado</string>
     <string name="hint_solicitacao">Solicitação feita</string>
+    <string name="hint_comentario">"Escreve um comentário...</string>
     <string name="btn_enviar_comentario">Enviar um comentário</string>
     <string name="btn_relatorios">Relatorios</string>
     <string name="btn_editar">Editar</string>
@@ -39,10 +40,11 @@
     <string name="titulo_relatorios">Relatórios de Avarias</string>
     <string name="sub_titulo_relatorios">Visualize estatísticas e as tendências sobre as avarias</string>
     <string name="hint_datas">Datas</string>
-    <string name="text_avarias_reportadas">Avarias Reportadas</string>
-    <string name="text_tempo_medio">Tempo médio de resolução</string>
-    <string name="text_avarias_resolvidas">Avarias Resolvidas</string>
-    <string name="text_avarias_tipo_equipamento">Avarias por Tipo de Equipamento</string>
+    <string name="hint_total_avarias">Total Avarias: </string>
+    <string name="text_avarias_reportadas">Avarias Reportadas: </string>
+    <string name="text_tempo_medio">Tempo médio de resolução: </string>
+    <string name="text_avarias_resolvidas">Avarias Resolvidas: </string>
+    <string name="text_avarias_tipo_equipamento">Avarias por Tipo de Equipamento: </string>
     <string name="btn_exportar_pdf">Exportar PDF</string>
     <string name="btn_detalhes">Ver detalhes</string>
     <string name="btn_alterar_tecnico">Alterar Técnico</string>
@@ -52,4 +54,7 @@
     <string name="btn_selecionar">Selecionar</string>
     <string name="titulo_registar_tecnico">Registar Técnico</string>
     <string name="hint_nome">Nome</string>
+    <string name="btn_menu">Menu</string>
+    <string name="btn_user">Utilizador</string>
+
 </resources>

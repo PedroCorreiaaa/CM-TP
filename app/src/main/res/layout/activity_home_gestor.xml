@@ -23,7 +23,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_menu"
-                android:contentDescription="Menu" />
+                android:contentDescription="@string/btn_menu" />
 
             <ImageView
                 android:id="@+id/btnLogout"
@@ -31,7 +31,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_user"
-                android:contentDescription="User" />
+                android:contentDescription="@string/btn_user" />
 
             <ImageView
                 android:id="@+id/logo"
@@ -68,7 +68,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gerir falhas de equipamentos"
+                    android:text="@string/mensagens_default_titulo"
                     android:textColor="#000000"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Registar problemas, monitorar em tempo real e gerar relatórios."
+                    android:text="@string/mensagens_default"
                     android:textColor="#000000"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -107,7 +107,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Registo de Avarias"
+                    android:text="@string/btn_registo_avarias"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"
@@ -132,7 +132,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monitorização"
+                    android:text="@string/btn_monitorizacao_avarias"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"
@@ -157,7 +157,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Relatórios"
+                    android:text="@string/btn_relatorios"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"
@@ -182,7 +182,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Notificações"
+                    android:text="@string/btn_notificacoes"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:gravity="center"

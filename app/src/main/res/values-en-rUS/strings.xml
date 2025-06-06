@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TechCare</string>
-    <string name="app_slogan">Simplify management, accelerate solutions</string>
+    <string name="app_slogan">Simplify management, accelerate solutions!</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="sem_conta">Dont have an account?</string>
@@ -29,6 +29,7 @@
     <string name="hint_descricao_avaria">Description</string>
     <string name="hint_estado_avaria">Status</string>
     <string name="hint_solicitacao">Request made</string>
+    <string name="hint_comentario">Write a comment&#8230;</string>
     <string name="btn_enviar_comentario">Send a comment</string>
     <string name="btn_relatorios">Reports</string>
     <string name="btn_editar">Edit</string>
@@ -39,6 +40,7 @@
     <string name="titulo_relatorios">Failure Reports</string>
     <string name="sub_titulo_relatorios">View statistics and trends about failures</string>
     <string name="hint_datas">Dates</string>
+    <string name="hint_total_avarias">Total Failures: </string>
     <string name="text_avarias_reportadas">Reported Failures</string>
     <string name="text_tempo_medio">Average resolution time</string>
     <string name="text_avarias_resolvidas">Resolved Failures</string>
@@ -52,4 +54,7 @@
     <string name="btn_selecionar">Select</string>
     <string name="titulo_registar_tecnico">Register Technician</string>
     <string name="hint_nome">Name</string>
+    <string name="btn_menu">Menu</string>
+    <string name="btn_user">User</string>
+
 </resources>

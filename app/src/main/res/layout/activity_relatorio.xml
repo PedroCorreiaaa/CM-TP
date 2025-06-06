@@ -13,7 +13,7 @@
             android:id="@+id/txtTotalAvarias"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total de Avarias: "
+            android:text="@string/hint_total_avarias"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -22,7 +22,7 @@
             android:id="@+id/txtTempoMedio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tempo Médio de Resolução: "
+            android:text="@string/text_tempo_medio"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -31,7 +31,7 @@
             android:id="@+id/txtResolvidas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Avarias Resolvidas: "
+            android:text="@string/text_avarias_resolvidas"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
