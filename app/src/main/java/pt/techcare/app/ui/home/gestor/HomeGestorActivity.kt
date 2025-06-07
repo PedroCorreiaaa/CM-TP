@@ -2,8 +2,12 @@ package pt.techcare.app.ui.home.gestor
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
+import pt.techcare.app.R
 import pt.techcare.app.databinding.ActivityHomeGestorBinding
+import pt.techcare.app.ui.avaria.monitorizar.MonitorizarAvariaActivity
+import pt.techcare.app.ui.avaria.registar.RegistarAvariaActivity
 import pt.techcare.app.ui.login.LoginActivity
 import pt.techcare.app.ui.relatorios.RelatorioActivity
 import pt.techcare.app.util.SessionManager
@@ -18,17 +22,34 @@ class HomeGestorActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val sessionManager = SessionManager(this)
-        val nome = sessionManager.getUserName() ?: "Gestor"
 
         binding.btnLogout.setOnClickListener {
-            sessionManager.clearSession()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            val popup = PopupMenu(this, it)
+            popup.menuInflater.inflate(R.menu.menu_user, popup.menu)
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_logout -> {
+                        sessionManager.clearSession()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popup.show()
+        }
+
+        binding.btnRegistar.setOnClickListener {
+            startActivity(Intent(this, RegistarAvariaActivity::class.java))
+        }
+
+        binding.btnMonitorizar.setOnClickListener {
+            startActivity(Intent(this, MonitorizarAvariaActivity::class.java))
         }
 
         binding.btnRelatorios.setOnClickListener {
-            val intent = Intent(this, RelatorioActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RelatorioActivity::class.java))
         }
     }
 }

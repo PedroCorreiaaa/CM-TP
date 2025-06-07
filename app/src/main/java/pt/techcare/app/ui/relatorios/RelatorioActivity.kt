@@ -1,6 +1,7 @@
 package pt.techcare.app.ui.relatorios
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
@@ -31,5 +32,13 @@ class RelatorioActivity : AppCompatActivity() {
         }
 
         viewModel.carregarEstatisticas()
+
+        binding.btnFiltrar.setOnClickListener {
+            Toast.makeText(this, "Funcionalidade de filtragem ainda não implementada", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnVerDetalhes.setOnClickListener {
+            Toast.makeText(this, "Funcionalidade de ver detalhes ainda não implementada", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Cores principais -->
     <color name="primary">#0D47A1</color>
     <color name="primary_dark">#08306A</color>
     <color name="accent">#2196F3</color>
+    <color name="blue">#1E88E5</color>
+    <color name="gray">#9E9E9E</color>
 
+    <!-- Prioridades -->
     <color name="prioridade_baixa">#FFD600</color>
     <color name="prioridade_pendente">#FF3D00</color>
 
+    <!-- Texto -->
     <color name="texto_principal">#000000</color>
-    <color name="texto_secundario">#888888</color>
+    <color name="texto_secundario">#757575</color>
 
+    <!-- Fundo -->
     <color name="card_bg">#F8F8F8</color>
     <color name="cinza_claro">#EEEEEE</color>
 </resources>

@@ -23,7 +23,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_menu"
-                android:contentDescription="@string/sem_conta" />
+                android:contentDescription="@string/btn_menu" />
 
             <ImageView
                 android:id="@+id/btnLogout"
@@ -31,7 +31,7 @@
                 android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_user"
-                android:contentDescription="@string/app_name" />
+                android:contentDescription="@string/btn_user" />
 
             <ImageView
                 android:id="@+id/logo"

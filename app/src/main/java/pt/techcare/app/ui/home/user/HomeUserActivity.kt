@@ -22,7 +22,6 @@ class HomeUserActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val sessionManager = SessionManager(this)
-        val nome = sessionManager.getUserName() ?: "Utilizador"
 
         binding.btnLogout.setOnClickListener {
             val popup = PopupMenu(this, it)
