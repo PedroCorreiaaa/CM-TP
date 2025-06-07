@@ -1,17 +1,23 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
 
-function verifyToken(req, res, next) {
+module.exports = function (req, res, next) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
+  if (!authHeader) {
+    return res.status(401).json({ error: "Token em falta" });
+  }
 
-  if (!token) return res.status(401).json({ error: 'Token em falta' });
+  const tokenParts = authHeader.split(' ');
+  if (tokenParts[0] !== 'Bearer' || !tokenParts[1]) {
+    return res.status(401).json({ error: "Token inválido ou mal formatado" });
+  }
+
+  const token = tokenParts[1];
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(403).json({ error: 'Token inválido ou expirado' });
-    req.jwt = decoded;
+    if (err) {
+      return res.status(401).json({ error: "Token inválido" });
+    }
+    req.user = decoded;
     next();
   });
-}
-
-module.exports = verifyToken;
+};

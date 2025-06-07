@@ -16,7 +16,7 @@ app.get("/", verifyToken, (req, res) => {
   res.send("API TechCare está online ✅");
 });
 
-app.post("/api/auth/login", verifyToken, async (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -33,9 +33,17 @@ app.post("/api/auth/login", verifyToken, async (req, res) => {
     if (!passwordMatch)
       return res.json({ success: false, message: "Palavra-passe incorreta." });
 
+    const jwt = require("jsonwebtoken");
+    const token = jwt.sign(
+      { id_utilizador: user.id_utilizador, email: user.email, id_tipo_utilizador: user.id_tipo_utilizador },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
     res.json({
       success: true,
       message: "Login efetuado com sucesso.",
+      token, 
       user: {
         id_utilizador: user.id_utilizador,
         nome: user.nome,
@@ -49,7 +57,7 @@ app.post("/api/auth/login", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/api/auth/register", verifyToken, async (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
   const { nome, email, password } = req.body;
 
   try {

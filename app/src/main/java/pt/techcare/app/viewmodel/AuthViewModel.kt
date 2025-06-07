@@ -19,7 +19,12 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
             if (response.isSuccessful) {
                 _loginState.value = response.body()
             } else {
-                _loginState.value = LoginResponse(false, "Erro ao conectar", null)
+                _loginState.value = LoginResponse(
+                    success = false,
+                    message = "Erro ao conectar",
+                    token = null,
+                    user = null
+                )
             }
         }
     }

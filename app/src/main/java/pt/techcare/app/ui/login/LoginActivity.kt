@@ -61,6 +61,11 @@ class LoginActivity : AppCompatActivity() {
             viewModel.loginState.collectLatest { response ->
                 response?.let {
                     if (it.success && it.user != null) {
+
+                        it.token?.let { token ->
+                            ApiClient.setToken(token)
+                        }
+
                         val user = it.user
 
                         sessionManager.saveUser(
@@ -69,13 +74,14 @@ class LoginActivity : AppCompatActivity() {
                             user.email,
                             user.id_tipo_utilizador
                         )
-
+                        
                         when (user.id_tipo_utilizador) {
                             1 -> startActivity(Intent(this@LoginActivity, HomeUserActivity::class.java))
                             2 -> startActivity(Intent(this@LoginActivity, HomeTecnicoActivity::class.java))
                             3 -> startActivity(Intent(this@LoginActivity, HomeGestorActivity::class.java))
                             else -> Toast.makeText(this@LoginActivity, "Tipo de utilizador desconhecido.", Toast.LENGTH_SHORT).show()
                         }
+
                         finish()
                     } else {
                         Toast.makeText(this@LoginActivity, it.message, Toast.LENGTH_SHORT).show()
