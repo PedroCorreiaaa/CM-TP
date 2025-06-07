@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
                             user.email,
                             user.id_tipo_utilizador
                         )
-                        
+
                         when (user.id_tipo_utilizador) {
                             1 -> startActivity(Intent(this@LoginActivity, HomeUserActivity::class.java))
                             2 -> startActivity(Intent(this@LoginActivity, HomeTecnicoActivity::class.java))

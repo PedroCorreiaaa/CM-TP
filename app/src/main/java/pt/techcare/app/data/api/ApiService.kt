@@ -1,5 +1,6 @@
 package pt.techcare.app.data.api
 
+import okhttp3.MultipartBody
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.model.Comentario
@@ -11,7 +12,9 @@ import pt.techcare.app.data.model.RelatorioEstatisticas
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
@@ -26,7 +29,7 @@ interface ApiService {
     suspend fun getAvarias(): Response<List<Avaria>>
 
     @POST("avarias")
-    suspend fun registarAvaria(@Body avaria: AvariaRequest): Response<Void>
+    suspend fun registarAvaria(@Body avaria: AvariaRequest): Response<Avaria>
 
     @GET("avarias/{id}/comentarios")
     suspend fun getComentarios(@Path("id") idAvaria: Int): Response<List<Comentario>>
@@ -39,4 +42,11 @@ interface ApiService {
 
     @GET("relatorios/estatisticas")
     suspend fun getEstatisticas(): Response<RelatorioEstatisticas>
+
+    @Multipart
+    @POST("avarias/{id}/imagem")
+    suspend fun uploadImagem(
+        @Path("id") idAvaria: Int,
+        @Part imagem: MultipartBody.Part
+    ): Response<Void>
 }

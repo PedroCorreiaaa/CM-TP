@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const pool = require("./db");
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 require("dotenv").config();
 
 const app = express();
@@ -153,11 +155,7 @@ app.post("/api/avarias", verifyToken, async (req, res) => {
       [id_utilizador, descricao, descricao_equipamento, localizacao, grau_urgencia]
     );
 
-    res.status(201).json({
-      success: true,
-      message: "Avaria registada com sucesso.",
-      avaria: result.rows[0]
-    });
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ success: false, message: "Erro ao registar a avaria." });
@@ -290,7 +288,7 @@ app.get("/api/tecnicos", verifyToken, async (req, res) => {
   }
 });
 
-// Registar técnico (assumindo que já existe na tabela utilizador)
+// Registar técnico
 app.post("/api/tecnicos", verifyToken, async (req, res) => {
   const { nome, email, password } = req.body;
 
@@ -320,6 +318,7 @@ app.post("/api/tecnicos", verifyToken, async (req, res) => {
   }
 });
 
+// Notificações
 app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
   const { id } = req.params;
 
@@ -340,6 +339,7 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
   }
 });
 
+// Criar notificação
 app.post("/api/notificacoes", verifyToken, async (req, res) => {
   const { id_avaria, mensagem } = req.body;
 
@@ -361,6 +361,22 @@ app.post("/api/notificacoes", verifyToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao criar notificação." });
+  }
+});
+
+// Upload de imagem
+app.post("/api/avarias/:id/imagem", verifyToken, upload.single('imagem'), async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query(
+      `INSERT INTO imagem (id_avaria, imagem, nome, extensao)
+       VALUES ($1, $2, $3, $4)`,
+      [id, req.file.buffer, req.file.originalname, 'jpg']
+    );
+    res.status(201).json({ success: true, message: "Imagem enviada com sucesso." });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, message: "Erro ao enviar imagem." });
   }
 });
 

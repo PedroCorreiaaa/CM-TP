@@ -3,7 +3,7 @@
     <string name="app_slogan">Simplify management, accelerate solutions!</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="sem_conta">Dont have an account?</string>
+    <string name="sem_conta">Don’t have an account?</string>
     <string name="link_registo">Sign Up</string>
     <string name="login">Log In</string>
     <string name="registar">Create Account</string>
@@ -22,6 +22,7 @@
     <string name="prioridade_media">Medium</string>
     <string name="prioridade_alta">High</string>
     <string name="btn_submeter">Submit Failure</string>
+    <string name="preview_image">Image Preview</string>
     <string name="titulo_monitorizar_avarias">Monitor Failures</string>
     <string name="hint_monitorizar_avarias">View and filter all reported failures</string>
     <string name="hint_barra_pesquisa">Search Failure</string>
@@ -29,7 +30,7 @@
     <string name="hint_descricao_avaria">Description</string>
     <string name="hint_estado_avaria">Status</string>
     <string name="hint_solicitacao">Request made</string>
-    <string name="hint_comentario">Write a comment&#8230;</string>
+    <string name="hint_comentario">Write a comment…</string>
     <string name="btn_enviar_comentario">Send a comment</string>
     <string name="btn_relatorios">Reports</string>
     <string name="btn_editar">Edit</string>
@@ -41,10 +42,10 @@
     <string name="sub_titulo_relatorios">View statistics and trends about failures</string>
     <string name="hint_datas">Dates</string>
     <string name="hint_total_avarias">Total Failures: </string>
-    <string name="text_avarias_reportadas">Reported Failures</string>
-    <string name="text_tempo_medio">Average resolution time</string>
-    <string name="text_avarias_resolvidas">Resolved Failures</string>
-    <string name="text_avarias_tipo_equipamento">Failures by Equipment Type</string>
+    <string name="text_avarias_reportadas">Reported Failures: </string>
+    <string name="text_tempo_medio">Average resolution time: </string>
+    <string name="text_avarias_resolvidas">Resolved Failures: </string>
+    <string name="text_avarias_tipo_equipamento">Failures by Equipment Type: </string>
     <string name="btn_exportar_pdf">Export PDF</string>
     <string name="btn_detalhes">View Details</string>
     <string name="btn_alterar_tecnico">Change Technician</string>
@@ -56,5 +57,4 @@
     <string name="hint_nome">Name</string>
     <string name="btn_menu">Menu</string>
     <string name="btn_user">User</string>
-
 </resources>
