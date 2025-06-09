@@ -1,11 +1,13 @@
 package pt.techcare.app.ui.avaria.monitorizar
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
@@ -21,6 +23,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMonitorizarAvariaBinding
     private val viewModel = AvariaViewModel()
     private lateinit var sessionManager: SessionManager
+    private var listaOriginal: List<Avaria> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +34,94 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
         lifecycleScope.launchWhenStarted {
             viewModel.avarias.collectLatest { lista ->
-                binding.listaAvarias.removeAllViews()
-                lista.forEach { avaria ->
-                    val card = criarCardAvaria(avaria)
-                    binding.listaAvarias.addView(card)
-                }
+                listaOriginal = lista
+                mostrarAvarias(lista)
             }
         }
 
         val userType = sessionManager.getUserType()
         val userId = sessionManager.getUserId()
         viewModel.carregarAvarias(userType, userId)
+
+        // Filtro ao escrever
+        binding.etPesquisa.setOnEditorActionListener { v, actionId, event ->
+            val texto = binding.etPesquisa.text.toString()
+            aplicarFiltroPesquisa(texto)
+            true
+        }
+
+        // Filtro ao clicar no botão
+        binding.btnFiltrar.setOnClickListener {
+            mostrarDialogoFiltro()
+        }
+    }
+
+    private fun mostrarAvarias(lista: List<Avaria>) {
+        binding.listaAvarias.removeAllViews()
+
+        if (lista.isEmpty()) {
+            val textoVazio = TextView(this).apply {
+                text = "Sem resultados"
+                textSize = 16f
+                gravity = Gravity.CENTER
+                setTextColor(resources.getColor(R.color.texto_secundario))
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = 32
+                }
+            }
+            binding.listaAvarias.addView(textoVazio)
+            return
+        }
+
+        lista.forEach { avaria ->
+            val card = criarCardAvaria(avaria)
+            binding.listaAvarias.addView(card)
+        }
+    }
+
+
+    private fun aplicarFiltroPesquisa(texto: String) {
+        val resultado = listaOriginal.filter {
+            it.descricao_equipamento.contains(texto, ignoreCase = true) ||
+                    it.descricao.contains(texto, ignoreCase = true)
+        }
+        mostrarAvarias(resultado)
+    }
+
+    private fun aplicarFiltroAvancado(estado: String, prioridade: String) {
+        val resultado = listaOriginal.filter { avaria ->
+            val correspondeEstado = estado == "Todos" || avaria.estado.descricao.equals(estado)
+            val correspondePrioridade = prioridade == "Todas" || avaria.grau_urgencia.equals(prioridade, true)
+            correspondeEstado && correspondePrioridade
+        }
+        mostrarAvarias(resultado)
+    }
+
+    private fun mostrarDialogoFiltro() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_filtros, null)
+
+        val spinnerEstado = dialogView.findViewById<Spinner>(R.id.spinnerEstado)
+        val spinnerPrioridade = dialogView.findViewById<Spinner>(R.id.spinnerPrioridade)
+
+        val estados = listOf("Todos", "Pendente", "Em Progresso", "Resolvido")
+        val prioridades = listOf("Todas", "Alta", "Média", "Baixa")
+
+        spinnerEstado.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, estados)
+        spinnerPrioridade.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, prioridades)
+
+        AlertDialog.Builder(this)
+            .setTitle("Filtrar avarias")
+            .setView(dialogView)
+            .setPositiveButton("Aplicar") { _, _ ->
+                val estadoSelecionado = spinnerEstado.selectedItem.toString()
+                val prioridadeSelecionada = spinnerPrioridade.selectedItem.toString()
+                aplicarFiltroAvancado(estadoSelecionado, prioridadeSelecionada)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun criarCardAvaria(avaria: Avaria): LinearLayout {
