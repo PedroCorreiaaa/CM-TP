@@ -22,7 +22,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                 _loginState.value = LoginResponse(
                     success = false,
                     message = "Erro ao conectar",
-                    token = null,
                     user = null
                 )
             }

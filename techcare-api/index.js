@@ -18,7 +18,7 @@ app.get("/", verifyToken, (req, res) => {
   res.send("API TechCare está online ✅");
 });
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/login", verifyToken, async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -35,17 +35,9 @@ app.post("/api/auth/login", async (req, res) => {
     if (!passwordMatch)
       return res.json({ success: false, message: "Palavra-passe incorreta." });
 
-    const jwt = require("jsonwebtoken");
-    const token = jwt.sign(
-      { id_utilizador: user.id_utilizador, email: user.email, id_tipo_utilizador: user.id_tipo_utilizador },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
     res.json({
       success: true,
       message: "Login efetuado com sucesso.",
-      token, 
       user: {
         id_utilizador: user.id_utilizador,
         nome: user.nome,
@@ -59,7 +51,8 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-app.post("/api/auth/register", async (req, res) => {
+
+app.post("/api/register", verifyToken, async (req, res) => {
   const { nome, email, password } = req.body;
 
   try {
@@ -93,7 +86,6 @@ app.post("/api/auth/register", async (req, res) => {
     res.status(500).json({ success: false, message: "Erro ao registar." });
   }
 });
-
 // Obter todas as avarias
 app.get("/api/avarias", verifyToken, async (req, res) => {
   try {
@@ -274,6 +266,123 @@ app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Erro ao atualizar a avaria." });
   }
 });
+
+app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        a.id_avaria,
+        a.id_utilizador,
+        a.descricao,
+        a.descricao_equipamento,
+        a.localizacao,
+        a.grau_urgencia,
+        to_char(a.data_registo, 'YYYY-MM-DD') AS data_registo,
+        a.resolucao,
+        ea.id_estado_avaria,
+        ea.descricao AS estado_descricao
+      FROM avaria a
+      JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
+      WHERE a.id_utilizador = $1
+      ORDER BY a.data_registo DESC
+    `, [id]);
+
+    const avarias = result.rows.map(row => ({
+      id_avaria: row.id_avaria,
+      id_utilizador: row.id_utilizador,
+      descricao: row.descricao,
+      descricao_equipamento: row.descricao_equipamento,
+      localizacao: row.localizacao,
+      grau_urgencia: row.grau_urgencia,
+      data_registo: row.data_registo,
+      resolucao: row.resolucao,
+      estado: {
+        id_estado_avaria: row.id_estado_avaria,
+        descricao: row.estado_descricao
+      }
+    }));
+
+    res.json(avarias);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Erro ao obter avarias do utilizador." });
+  }
+});
+
+app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        a.id_avaria,
+        a.id_utilizador,
+        a.descricao,
+        a.descricao_equipamento,
+        a.localizacao,
+        a.grau_urgencia,
+        to_char(a.data_registo, 'YYYY-MM-DD') AS data_registo,
+        a.resolucao,
+        ea.id_estado_avaria,
+        ea.descricao AS estado_descricao
+      FROM avaria a
+      JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
+      JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
+      WHERE at.id_tecnico = $1
+        AND at.data_atribuicao = (
+          SELECT MAX(at2.data_atribuicao)
+          FROM avaria_tecnico at2
+          WHERE at2.id_avaria = at.id_avaria
+        )
+      ORDER BY a.data_registo DESC
+    `, [id]);
+
+    const avarias = result.rows.map(row => ({
+      id_avaria: row.id_avaria,
+      id_utilizador: row.id_utilizador,
+      descricao: row.descricao,
+      descricao_equipamento: row.descricao_equipamento,
+      localizacao: row.localizacao,
+      grau_urgencia: row.grau_urgencia,
+      data_registo: row.data_registo,
+      resolucao: row.resolucao,
+      estado: {
+        id_estado_avaria: row.id_estado_avaria,
+        descricao: row.estado_descricao
+      }
+    }));
+    res.json(avarias);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erro ao obter avarias do técnico." });
+  }
+});
+
+
+app.post("/api/avarias/:id/tecnico", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { id_tecnico } = req.body;
+
+  try {
+    const result = await pool.query(`
+      INSERT INTO avaria_tecnico (id_avaria, id_tecnico, data_atribuicao)
+      VALUES ($1, $2, NOW())
+      RETURNING *
+    `, [id, id_tecnico]);
+
+    res.json({
+      success: true,
+      message: "Técnico atribuído com sucesso.",
+      atribuicao: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erro ao atribuir técnico." });
+  }
+});
+
 
 // Listar técnicos
 app.get("/api/tecnicos", verifyToken, async (req, res) => {

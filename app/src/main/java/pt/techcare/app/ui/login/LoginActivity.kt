@@ -62,10 +62,6 @@ class LoginActivity : AppCompatActivity() {
                 response?.let {
                     if (it.success && it.user != null) {
 
-                        it.token?.let { token ->
-                            ApiClient.setToken(token)
-                        }
-
                         val user = it.user
 
                         sessionManager.saveUser(

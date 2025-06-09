@@ -1,6 +1,7 @@
 package pt.techcare.app.data.api
 
 import okhttp3.MultipartBody
+import pt.techcare.app.data.model.AtribuirTecnicoRequest
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.model.Comentario
@@ -13,6 +14,7 @@ import pt.techcare.app.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -21,11 +23,16 @@ import retrofit2.http.Path
 
 interface ApiService {
 
-    @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+    @POST("api/login")
+    suspend fun login(
+        @Body request: LoginRequest
+    ): Response<LoginResponse>
 
-    @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<LoginResponse>
+    @POST("api/register")
+    suspend fun register(
+        @Body request: RegisterRequest
+    ): Response<LoginResponse>
+
 
     @GET("api/avarias")
     suspend fun getAvarias(): Response<List<Avaria>>
@@ -45,10 +52,10 @@ interface ApiService {
         @Body request: ComentarioRequest
     ): Response<Void>
 
-    @PATCH("api/avarias/{id}/atribuir_tecnico")
+    @POST("api/avarias/{id}/tecnico")
     suspend fun atribuirTecnico(
         @Path("id") idAvaria: Int,
-        @Body tecnico: Map<String, Int>
+        @Body request: AtribuirTecnicoRequest
     ): Response<Void>
 
     @Multipart
@@ -58,11 +65,11 @@ interface ApiService {
         @Part imagem: MultipartBody.Part
     ): Response<Void>
 
-    @GET("api/avarias/tecnico/{id_tecnico}")
-    suspend fun getAvariasTecnico(@Path("id_tecnico") idTecnico: Int): Response<List<Avaria>>
+    @GET("api/avarias/tecnico/{id}")
+    suspend fun getAvariasTecnico(@Path("id") idTecnico: Int): Response<List<Avaria>>
 
-    @GET("api/avarias/utilizador/{id_utilizador}")
-    suspend fun getAvariasUtilizador(@Path("id_utilizador") idUtilizador: Int): Response<List<Avaria>>
+    @GET("api/avarias/user/{id}")
+    suspend fun getAvariasUtilizador(@Path("id") idUtilizador: Int): Response<List<Avaria>>
 
     @GET("api/tecnicos")
     suspend fun getTecnicos(): Response<List<User>>
