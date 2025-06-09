@@ -9,10 +9,12 @@ import pt.techcare.app.data.model.LoginRequest
 import pt.techcare.app.data.model.LoginResponse
 import pt.techcare.app.data.model.RegisterRequest
 import pt.techcare.app.data.model.RelatorioEstatisticas
+import pt.techcare.app.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -25,28 +27,46 @@ interface ApiService {
     @POST("auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<LoginResponse>
 
-    @GET("avarias")
+    @GET("api/avarias")
     suspend fun getAvarias(): Response<List<Avaria>>
 
-    @POST("avarias")
+    @POST("api/avarias")
     suspend fun registarAvaria(@Body avaria: AvariaRequest): Response<Avaria>
 
-    @GET("avarias/{id}/comentarios")
+    @GET("api/avarias/{id}")
+    suspend fun getAvariaById(@Path("id") idAvaria: Int): Response<Avaria>
+
+    @GET("api/avarias/{id}/comentarios")
     suspend fun getComentarios(@Path("id") idAvaria: Int): Response<List<Comentario>>
 
-    @POST("avarias/{id}/comentarios")
+    @POST("api/avarias/{id}/comentarios")
     suspend fun enviarComentario(
         @Path("id") idAvaria: Int,
         @Body request: ComentarioRequest
     ): Response<Void>
 
-    @GET("relatorios/estatisticas")
-    suspend fun getEstatisticas(): Response<RelatorioEstatisticas>
+    @PATCH("api/avarias/{id}/atribuir_tecnico")
+    suspend fun atribuirTecnico(
+        @Path("id") idAvaria: Int,
+        @Body tecnico: Map<String, Int>
+    ): Response<Void>
 
     @Multipart
-    @POST("avarias/{id}/imagem")
+    @POST("api/avarias/{id}/imagem")
     suspend fun uploadImagem(
         @Path("id") idAvaria: Int,
         @Part imagem: MultipartBody.Part
     ): Response<Void>
+
+    @GET("api/avarias/tecnico/{id_tecnico}")
+    suspend fun getAvariasTecnico(@Path("id_tecnico") idTecnico: Int): Response<List<Avaria>>
+
+    @GET("api/avarias/utilizador/{id_utilizador}")
+    suspend fun getAvariasUtilizador(@Path("id_utilizador") idUtilizador: Int): Response<List<Avaria>>
+
+    @GET("api/tecnicos")
+    suspend fun getTecnicos(): Response<List<User>>
+
+    @GET("api/relatorios/estatisticas")
+    suspend fun getEstatisticas(): Response<RelatorioEstatisticas>
 }

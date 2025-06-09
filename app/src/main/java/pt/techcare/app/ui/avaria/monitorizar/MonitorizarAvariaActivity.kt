@@ -1,5 +1,6 @@
 package pt.techcare.app.ui.avaria.monitorizar
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.ViewGroup
@@ -9,19 +10,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import pt.techcare.app.R
-import pt.techcare.app.data.model.AvariaItem
+import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.databinding.ActivityMonitorizarAvariaBinding
+import pt.techcare.app.ui.avaria.detalhe.AvariaDetalheActivity
+import pt.techcare.app.util.SessionManager
 import pt.techcare.app.viewmodel.AvariaViewModel
 
 class MonitorizarAvariaActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMonitorizarAvariaBinding
     private val viewModel = AvariaViewModel()
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMonitorizarAvariaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        sessionManager = SessionManager(this)
 
         lifecycleScope.launchWhenStarted {
             viewModel.avarias.collectLatest { lista ->
@@ -33,10 +39,12 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.carregarAvarias()
+        val userType = sessionManager.getUserType()
+        val userId = sessionManager.getUserId()
+        viewModel.carregarAvarias(userType, userId)
     }
 
-    private fun criarCardAvaria(avaria: AvariaItem): LinearLayout {
+    private fun criarCardAvaria(avaria: Avaria): LinearLayout {
         val context = this
 
         val card = LinearLayout(context).apply {
@@ -49,22 +57,27 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
             ).apply {
                 bottomMargin = 24
             }
+            setOnClickListener {
+                val intent = Intent(context, AvariaDetalheActivity::class.java)
+                intent.putExtra("id_avaria", avaria.id_avaria)
+                startActivity(intent)
+            }
         }
 
         val titulo = TextView(context).apply {
-            text = avaria.titulo
+            text = avaria.descricao_equipamento
             setTextColor(resources.getColor(R.color.texto_principal))
             textSize = 16f
             setPadding(0, 0, 0, 4)
         }
 
         val prioridade = TextView(context).apply {
-            text = avaria.prioridade
+            text = avaria.grau_urgencia
             textSize = 14f
             setPadding(0, 0, 0, 4)
             gravity = Gravity.START
             setTextColor(
-                if (avaria.prioridade == "Baixa")
+                if (avaria.grau_urgencia.equals("Baixa", ignoreCase = true))
                     resources.getColor(R.color.prioridade_baixa)
                 else
                     resources.getColor(R.color.prioridade_pendente)
@@ -72,7 +85,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         }
 
         val data = TextView(context).apply {
-            text = avaria.data
+            text = avaria.data_registo
             textSize = 14f
             setPadding(0, 0, 0, 4)
             setTextColor(resources.getColor(R.color.texto_secundario))
