@@ -1,5 +1,6 @@
 package pt.techcare.app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,12 +26,27 @@ class AvariaViewModel : ViewModel() {
             }
             if (response.isSuccessful) {
                 _avarias.value = response.body() ?: emptyList()
+                Log.d("AvariaViewModel", "Avarias carregadas: ${_avarias.value.size}")
+            } else {
+                Log.e("AvariaViewModel", "Erro ao carregar avarias: ${response.code()} - ${response.message()}")
             }
         }
     }
 
-    suspend fun atribuirTecnico(idAvaria: Int, idTecnico: Int): Boolean {
-        val response = repository.atribuirTecnico(idAvaria, idTecnico)
-        return response.isSuccessful
+    suspend fun atribuirTecnico(idAvaria: Int, idUtilizador: Int): Boolean {
+        try {
+            Log.d("AvariaViewModel", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $idUtilizador")
+            val response = repository.atribuirTecnico(idAvaria, idUtilizador)
+            if (response.isSuccessful) {
+                Log.d("AvariaViewModel", "Técnico atribuído com sucesso. Response: ${response.body()}")
+                return true
+            } else {
+                Log.e("AvariaViewModel", "Erro na API: ${response.code()} - ${response.message()}")
+                return false
+            }
+        } catch (e: Exception) {
+            Log.e("AvariaViewModel", "Exceção ao atribuir técnico: ${e.message}")
+            return false
+        }
     }
 }

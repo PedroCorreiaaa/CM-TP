@@ -33,6 +33,6 @@
         <activity android:name=".ui.avaria.registar.RegistarAvariaActivity" />
         <activity android:name=".ui.avaria.monitorizar.MonitorizarAvariaActivity" />
         <activity android:name=".ui.avaria.detalhe.AvariaDetalheActivity" />
-        <activity android:name=".ui.avaria.detalhe.SelecionarTecnicoActivity"/>
+        <activity android:name=".ui.avaria.detalhe.SelecionarTecnicoActivity" />
     </application>
 </manifest>

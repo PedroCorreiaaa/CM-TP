@@ -51,7 +51,6 @@ app.post("/api/login", verifyToken, async (req, res) => {
   }
 });
 
-
 app.post("/api/register", verifyToken, async (req, res) => {
   const { nome, email, password } = req.body;
 
@@ -86,6 +85,7 @@ app.post("/api/register", verifyToken, async (req, res) => {
     res.status(500).json({ success: false, message: "Erro ao registar." });
   }
 });
+
 // Obter todas as avarias
 app.get("/api/avarias", verifyToken, async (req, res) => {
   try {
@@ -330,7 +330,7 @@ app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
       FROM avaria a
       JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
       JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
-      WHERE at.id_tecnico = $1
+      WHERE at.id_utilizador = $1
         AND at.data_atribuicao = (
           SELECT MAX(at2.data_atribuicao)
           FROM avaria_tecnico at2
@@ -360,17 +360,25 @@ app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
   }
 });
 
-
 app.post("/api/avarias/:id/tecnico", verifyToken, async (req, res) => {
   const { id } = req.params;
-  const { id_tecnico } = req.body;
+  const { id_utilizador } = req.body;
 
   try {
+    const tecnicoQuery = await pool.query(
+      "SELECT * FROM utilizador WHERE id_utilizador = $1 AND id_tipo_utilizador = 2",
+      [id_utilizador]
+    );
+
+    if (tecnicoQuery.rows.length === 0) {
+      return res.status(400).json({ message: "ID fornecido não corresponde a um técnico." });
+    }
+
     const result = await pool.query(`
-      INSERT INTO avaria_tecnico (id_avaria, id_tecnico, data_atribuicao)
+      INSERT INTO avaria_tecnico (id_avaria, id_utilizador, data_atribuicao)
       VALUES ($1, $2, NOW())
       RETURNING *
-    `, [id, id_tecnico]);
+    `, [id, id_utilizador]);
 
     res.json({
       success: true,
@@ -383,13 +391,12 @@ app.post("/api/avarias/:id/tecnico", verifyToken, async (req, res) => {
   }
 });
 
-
 // Listar técnicos
 app.get("/api/tecnicos", verifyToken, async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT * FROM utilizador WHERE id_tipo_utilizador = 2
-    `);
+      SELECT id_utilizador, nome, email, id_tipo_utilizador FROM utilizador WHERE id_tipo_utilizador = 2
+    `); // Correção de id_type_utilizador para id_tipo_utilizador
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -436,9 +443,9 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
       SELECT DISTINCT n.*
       FROM notificacao n
       JOIN avaria a ON n.id_avaria = a.id_avaria
-      LEFT JOIN atribuir_tecnico at ON a.id_avaria = at.id_avaria
+      LEFT JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
       WHERE a.id_utilizador = $1 OR at.id_utilizador = $1
-      ORDER BY n.data_notificacao DESC
+      ORDER BY n.data_emissao DESC
     `, [id]);
 
     res.json(result.rows);
