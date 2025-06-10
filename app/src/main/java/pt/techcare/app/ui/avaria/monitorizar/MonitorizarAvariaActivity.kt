@@ -7,10 +7,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import pt.techcare.app.R
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.databinding.ActivityMonitorizarAvariaBinding
@@ -42,15 +47,14 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         val userType = sessionManager.getUserType()
         val userId = sessionManager.getUserId()
         viewModel.carregarAvarias(userType, userId)
+        binding.etPesquisa.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                aplicarFiltroPesquisa(s.toString())
+            }
+        })
 
-        // Filtro ao escrever
-        binding.etPesquisa.setOnEditorActionListener { v, actionId, event ->
-            val texto = binding.etPesquisa.text.toString()
-            aplicarFiltroPesquisa(texto)
-            true
-        }
-
-        // Filtro ao clicar no botão
         binding.btnFiltrar.setOnClickListener {
             mostrarDialogoFiltro()
         }
@@ -68,9 +72,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    topMargin = 32
-                }
+                ).apply { topMargin = 32 }
             }
             binding.listaAvarias.addView(textoVazio)
             return
@@ -82,7 +84,6 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         }
     }
 
-
     private fun aplicarFiltroPesquisa(texto: String) {
         val resultado = listaOriginal.filter {
             it.descricao_equipamento.contains(texto, ignoreCase = true) ||
@@ -93,8 +94,8 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
     private fun aplicarFiltroAvancado(estado: String, prioridade: String) {
         val resultado = listaOriginal.filter { avaria ->
-            val correspondeEstado = estado == "Todos" || avaria.estado.descricao.equals(estado)
-            val correspondePrioridade = prioridade == "Todas" || avaria.grau_urgencia.equals(prioridade, true)
+            val correspondeEstado = estado == "Todos" || avaria.estado.descricao.equals(estado, ignoreCase = true)
+            val correspondePrioridade = prioridade == "Todas" || avaria.grau_urgencia.equals(prioridade, ignoreCase = true)
             correspondeEstado && correspondePrioridade
         }
         mostrarAvarias(resultado)
@@ -102,11 +103,10 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
     private fun mostrarDialogoFiltro() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_filtros, null)
-
         val spinnerEstado = dialogView.findViewById<Spinner>(R.id.spinnerEstado)
         val spinnerPrioridade = dialogView.findViewById<Spinner>(R.id.spinnerPrioridade)
 
-        val estados = listOf("Todos", "Pendente", "Em Progresso", "Resolvido")
+        val estados = listOf("Todos", "Aberto", "Em Progresso", "Resolvido")
         val prioridades = listOf("Todas", "Alta", "Média", "Baixa")
 
         spinnerEstado.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, estados)
@@ -126,7 +126,6 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
     private fun criarCardAvaria(avaria: Avaria): LinearLayout {
         val context = this
-
         val card = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(24, 16, 24, 16)
@@ -134,15 +133,15 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
             layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                bottomMargin = 24
-            }
+            ).apply { bottomMargin = 24 }
             setOnClickListener {
                 val intent = Intent(context, AvariaDetalheActivity::class.java)
                 intent.putExtra("id_avaria", avaria.id_avaria)
                 startActivity(intent)
             }
         }
+
+        val userType = sessionManager.getUserType()
 
         val titulo = TextView(context).apply {
             text = avaria.descricao_equipamento
@@ -152,16 +151,25 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         }
 
         val prioridade = TextView(context).apply {
-            text = avaria.grau_urgencia
+            text = avaria.grau_urgencia ?: "Sem prioridade"
             textSize = 14f
             setPadding(0, 0, 0, 4)
             gravity = Gravity.START
             setTextColor(
-                if (avaria.grau_urgencia.equals("Baixa", ignoreCase = true))
-                    resources.getColor(R.color.prioridade_baixa)
-                else
-                    resources.getColor(R.color.prioridade_pendente)
+                when (avaria.grau_urgencia?.lowercase()) {
+                    "baixa" -> resources.getColor(R.color.prioridade_baixa)
+                    "média" -> resources.getColor(R.color.prioridade_media)
+                    "alta" -> resources.getColor(R.color.prioridade_alta)
+                    else -> resources.getColor(R.color.texto_secundario)
+                }
             )
+        }
+
+        val estado = TextView(context).apply {
+            text = avaria.estado.descricao
+            textSize = 14f
+            setPadding(0, 0, 0, 4)
+            setTextColor(resources.getColor(R.color.texto_secundario))
         }
 
         val data = TextView(context).apply {
@@ -176,12 +184,45 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
             textSize = 14f
             setTextColor(resources.getColor(R.color.texto_principal))
         }
-
         card.addView(titulo)
         card.addView(prioridade)
+        card.addView(estado)
         card.addView(data)
         card.addView(descricao)
 
         return card
+    }
+
+    private fun mostrarDialogoAlterarEstado(idAvaria: Int) {
+        val estados = arrayOf("Pendente", "Resolvido")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Alterar Estado")
+        builder.setItems(estados) { _, which ->
+            val novoEstado = when (estados[which]) {
+                "Pendente" -> 1
+                "Resolvido" -> 2
+                else -> 1
+            }
+            atualizarEstadoAvaria(idAvaria, novoEstado)
+        }
+        builder.show()
+    }
+
+    private fun atualizarEstadoAvaria(idAvaria: Int, novoEstado: Int) {
+        lifecycleScope.launch {
+            try {
+                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado))
+                if (sucesso) {
+                    Toast.makeText(this@MonitorizarAvariaActivity, "Estado atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                    val userType = sessionManager.getUserType()
+                    val userId = sessionManager.getUserId()
+                    viewModel.carregarAvarias(userType, userId)
+                } else {
+                    Toast.makeText(this@MonitorizarAvariaActivity, "Erro ao atualizar estado.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@MonitorizarAvariaActivity, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

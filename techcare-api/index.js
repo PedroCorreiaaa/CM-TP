@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const pool = require("./db");
-const multer = require('multer');
+const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 require("dotenv").config();
 
@@ -10,31 +10,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authRoutes = require('./routes/auth');
-const verifyToken = require('./middleware/verifyToken');
-app.use('/auth', authRoutes);
+const authRoutes = require("./routes/auth");
+const verifyToken = require("./middleware/verifyToken");
+app.use("/auth", authRoutes);
 
 app.get("/", verifyToken, (req, res) => {
-  res.send("API TechCare está online ✅");
+  res.send("API TechCare está online");
 });
 
 app.post("/api/login", verifyToken, async (req, res) => {
   const { email, password } = req.body;
-
   try {
-    const userQuery = await pool.query(
-      "SELECT * FROM utilizador WHERE email = $1",
-      [email]
-    );
-
+    const userQuery = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
     const user = userQuery.rows[0];
-    if (!user)
-      return res.json({ success: false, message: "Utilizador não encontrado." });
-
+    if (!user) return res.json({ success: false, message: "Utilizador não encontrado." });
     const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch)
-      return res.json({ success: false, message: "Palavra-passe incorreta." });
-
+    if (!passwordMatch) return res.json({ success: false, message: "Palavra-passe incorreta." });
     res.json({
       success: true,
       message: "Login efetuado com sucesso.",
@@ -53,22 +44,14 @@ app.post("/api/login", verifyToken, async (req, res) => {
 
 app.post("/api/register", verifyToken, async (req, res) => {
   const { nome, email, password } = req.body;
-
   try {
-    const emailExists = await pool.query(
-      "SELECT * FROM utilizador WHERE email = $1",
-      [email]
-    );
-
-    if (emailExists.rows.length > 0)
-      return res.json({ success: false, message: "Email já registado." });
-
+    const emailExists = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
+    if (emailExists.rows.length > 0) return res.json({ success: false, message: "Email já registado." });
     const hashed = await bcrypt.hash(password, 10);
     const newUser = await pool.query(
       "INSERT INTO utilizador (id_tipo_utilizador, nome, email, password) VALUES (1, $1, $2, $3) RETURNING *",
       [nome, email, hashed]
     );
-
     const user = newUser.rows[0];
     res.json({
       success: true,
@@ -86,27 +69,15 @@ app.post("/api/register", verifyToken, async (req, res) => {
   }
 });
 
-// Obter todas as avarias
 app.get("/api/avarias", verifyToken, async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT 
-        a.id_avaria,
-        a.id_utilizador,
-        a.descricao,
-        a.descricao_equipamento,
-        a.localizacao,
-        a.grau_urgencia,
-        to_char(a.data_registo, 'YYYY-MM-DD') AS data_registo,
-        a.resolucao,
-        ea.id_estado_avaria,
-        ea.descricao AS estado_descricao
+      SELECT a.*, ea.descricao AS estado_descricao
       FROM avaria a
       JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
       ORDER BY a.data_registo DESC
     `);
-
-    const avarias = result.rows.map(row => ({
+    const avarias = result.rows.map((row) => ({
       id_avaria: row.id_avaria,
       id_utilizador: row.id_utilizador,
       descricao: row.descricao,
@@ -115,12 +86,8 @@ app.get("/api/avarias", verifyToken, async (req, res) => {
       grau_urgencia: row.grau_urgencia,
       data_registo: row.data_registo,
       resolucao: row.resolucao,
-      estado: {
-        id_estado_avaria: row.id_estado_avaria,
-        descricao: row.estado_descricao
-      }
+      estado: { id_estado_avaria: row.id_estado_avaria, descricao: row.estado_descricao },
     }));
-
     res.json(avarias);
   } catch (err) {
     console.error(err.message);
@@ -128,25 +95,15 @@ app.get("/api/avarias", verifyToken, async (req, res) => {
   }
 });
 
-// Criar nova avaria
 app.post("/api/avarias", verifyToken, async (req, res) => {
-  const {
-    id_utilizador,
-    descricao,
-    descricao_equipamento,
-    localizacao,
-    grau_urgencia
-  } = req.body;
-
+  const { id_utilizador, descricao, descricao_equipamento, localizacao, grau_urgencia = null } = req.body;
   try {
     const result = await pool.query(
-      `INSERT INTO avaria 
-        (id_utilizador, id_estado_avaria, descricao, descricao_equipamento, localizacao, grau_urgencia) 
+      `INSERT INTO avaria (id_utilizador, id_estado_avaria, descricao, descricao_equipamento, localizacao, grau_urgencia) 
        VALUES ($1, 1, $2, $3, $4, $5) 
        RETURNING *`,
       [id_utilizador, descricao, descricao_equipamento, localizacao, grau_urgencia]
     );
-
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err.message);
@@ -154,27 +111,19 @@ app.post("/api/avarias", verifyToken, async (req, res) => {
   }
 });
 
-// Obter dados de uma avaria
 app.get("/api/avarias/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const result = await pool.query(`
-      SELECT 
-        a.*,
-        ea.descricao AS estado_descricao,
-        u.nome AS nome_utilizador
-      FROM avaria a
-      JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
-      JOIN utilizador u ON a.id_utilizador = u.id_utilizador
-      WHERE a.id_avaria = $1
-    `, [id]);
-
-    if (result.rows.length === 0)
-      return res.status(404).json({ message: "Avaria não encontrada." });
-
+    const result = await pool.query(
+      `SELECT a.*, ea.descricao AS estado_descricao, u.nome AS nome_utilizador
+       FROM avaria a
+       JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
+       JOIN utilizador u ON a.id_utilizador = u.id_utilizador
+       WHERE a.id_avaria = $1`,
+      [id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ message: "Avaria não encontrada." });
     const row = result.rows[0];
-
     res.json({
       id_avaria: row.id_avaria,
       id_utilizador: row.id_utilizador,
@@ -185,10 +134,7 @@ app.get("/api/avarias/:id", verifyToken, async (req, res) => {
       grau_urgencia: row.grau_urgencia,
       data_registo: row.data_registo,
       resolucao: row.resolucao,
-      estado: {
-        id_estado_avaria: row.id_estado_avaria,
-        descricao: row.estado_descricao
-      }
+      estado: { id_estado_avaria: row.id_estado_avaria, descricao: row.estado_descricao },
     });
   } catch (err) {
     console.error(err);
@@ -196,19 +142,17 @@ app.get("/api/avarias/:id", verifyToken, async (req, res) => {
   }
 });
 
-// Listar comentários de uma avaria
 app.get("/api/avarias/:id/comentarios", verifyToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const result = await pool.query(`
-      SELECT c.*, u.nome AS nome_utilizador
-      FROM comentario c
-      JOIN utilizador u ON c.id_utilizador = u.id_utilizador
-      WHERE c.id_avaria = $1
-      ORDER BY c.data_comentario DESC
-    `, [id]);
-
+    const result = await pool.query(
+      `SELECT c.*, u.nome AS nome_utilizador
+       FROM comentario c
+       JOIN utilizador u ON c.id_utilizador = u.id_utilizador
+       WHERE c.id_avaria = $1
+       ORDER BY c.data_comentario DESC`,
+      [id]
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -216,51 +160,38 @@ app.get("/api/avarias/:id/comentarios", verifyToken, async (req, res) => {
   }
 });
 
-// Criar comentário para uma avaria
 app.post("/api/avarias/:id/comentarios", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { id_utilizador, conteudo } = req.body;
-
   try {
-    const result = await pool.query(`
-      INSERT INTO comentario (id_utilizador, id_avaria, conteudo)
-      VALUES ($1, $2, $3)
-      RETURNING *
-    `, [id_utilizador, id, conteudo]);
-
-    res.status(201).json({
-      success: true,
-      comentario: result.rows[0]
-    });
+    const result = await pool.query(
+      `INSERT INTO comentario (id_utilizador, id_avaria, conteudo)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [id_utilizador, id, conteudo]
+    );
+    res.status(201).json({ success: true, comentario: result.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao adicionar comentário." });
   }
 });
 
-// Atualizar uma avaria parcialmente
 app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-  const campos = req.body;
-
-  const chaves = Object.keys(campos);
-  const valores = Object.values(campos);
-
-  if (chaves.length === 0)
-    return res.status(400).json({ message: "Nenhum campo para atualizar." });
-
-  const setClause = chaves.map((chave, idx) => `${chave} = $${idx + 1}`).join(", ");
-
+  const { id_estado_avaria, grau_urgencia } = req.body;
+  if (!id_estado_avaria && !grau_urgencia) return res.status(400).json({ message: "Nenhum campo para atualizar." });
   try {
     const result = await pool.query(
-      `UPDATE avaria SET ${setClause} WHERE id_avaria = $${chaves.length + 1} RETURNING *`,
-      [...valores, id]
+      `UPDATE avaria 
+       SET id_estado_avaria = COALESCE($1, id_estado_avaria), 
+           grau_urgencia = COALESCE($2, grau_urgencia)
+       WHERE id_avaria = $3 
+       RETURNING *`,
+      [id_estado_avaria, grau_urgencia, id]
     );
-
-    res.json({
-      success: true,
-      avaria: result.rows[0]
-    });
+    if (result.rows.length === 0) return res.status(404).json({ message: "Avaria não encontrada." });
+    res.json({ success: true, avaria: result.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao atualizar a avaria." });
@@ -269,27 +200,16 @@ app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
 
 app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const result = await pool.query(`
-      SELECT 
-        a.id_avaria,
-        a.id_utilizador,
-        a.descricao,
-        a.descricao_equipamento,
-        a.localizacao,
-        a.grau_urgencia,
-        to_char(a.data_registo, 'YYYY-MM-DD') AS data_registo,
-        a.resolucao,
-        ea.id_estado_avaria,
-        ea.descricao AS estado_descricao
-      FROM avaria a
-      JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
-      WHERE a.id_utilizador = $1
-      ORDER BY a.data_registo DESC
-    `, [id]);
-
-    const avarias = result.rows.map(row => ({
+    const result = await pool.query(
+      `SELECT a.*, ea.descricao AS estado_descricao
+       FROM avaria a
+       JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
+       WHERE a.id_utilizador = $1
+       ORDER BY a.data_registo DESC`,
+      [id]
+    );
+    const avarias = result.rows.map((row) => ({
       id_avaria: row.id_avaria,
       id_utilizador: row.id_utilizador,
       descricao: row.descricao,
@@ -298,12 +218,8 @@ app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
       grau_urgencia: row.grau_urgencia,
       data_registo: row.data_registo,
       resolucao: row.resolucao,
-      estado: {
-        id_estado_avaria: row.id_estado_avaria,
-        descricao: row.estado_descricao
-      }
+      estado: { id_estado_avaria: row.id_estado_avaria, descricao: row.estado_descricao },
     }));
-
     res.json(avarias);
   } catch (err) {
     console.error(err.message);
@@ -313,33 +229,18 @@ app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
 
 app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const result = await pool.query(`
-      SELECT 
-        a.id_avaria,
-        a.id_utilizador,
-        a.descricao,
-        a.descricao_equipamento,
-        a.localizacao,
-        a.grau_urgencia,
-        to_char(a.data_registo, 'YYYY-MM-DD') AS data_registo,
-        a.resolucao,
-        ea.id_estado_avaria,
-        ea.descricao AS estado_descricao
-      FROM avaria a
-      JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
-      JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
-      WHERE at.id_utilizador = $1
-        AND at.data_atribuicao = (
-          SELECT MAX(at2.data_atribuicao)
-          FROM avaria_tecnico at2
-          WHERE at2.id_avaria = at.id_avaria
-        )
-      ORDER BY a.data_registo DESC
-    `, [id]);
-
-    const avarias = result.rows.map(row => ({
+    const result = await pool.query(
+      `SELECT a.*, ea.descricao AS estado_descricao
+       FROM avaria a
+       JOIN estado_avaria ea ON a.id_estado_avaria = ea.id_estado_avaria
+       JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
+       WHERE at.id_utilizador = $1
+         AND at.data_atribuicao = (SELECT MAX(at2.data_atribuicao) FROM avaria_tecnico at2 WHERE at2.id_avaria = at.id_avaria)
+       ORDER BY a.data_registo DESC`,
+      [id]
+    );
+    const avarias = result.rows.map((row) => ({
       id_avaria: row.id_avaria,
       id_utilizador: row.id_utilizador,
       descricao: row.descricao,
@@ -348,10 +249,7 @@ app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
       grau_urgencia: row.grau_urgencia,
       data_registo: row.data_registo,
       resolucao: row.resolucao,
-      estado: {
-        id_estado_avaria: row.id_estado_avaria,
-        descricao: row.estado_descricao
-      }
+      estado: { id_estado_avaria: row.id_estado_avaria, descricao: row.estado_descricao },
     }));
     res.json(avarias);
   } catch (err) {
@@ -363,27 +261,25 @@ app.get("/api/avarias/tecnico/:id", verifyToken, async (req, res) => {
 app.post("/api/avarias/:id/tecnico", verifyToken, async (req, res) => {
   const { id } = req.params;
   const { id_utilizador } = req.body;
-
   try {
     const tecnicoQuery = await pool.query(
       "SELECT * FROM utilizador WHERE id_utilizador = $1 AND id_tipo_utilizador = 2",
       [id_utilizador]
     );
-
-    if (tecnicoQuery.rows.length === 0) {
+    if (tecnicoQuery.rows.length === 0)
       return res.status(400).json({ message: "ID fornecido não corresponde a um técnico." });
-    }
-
-    const result = await pool.query(`
-      INSERT INTO avaria_tecnico (id_avaria, id_utilizador, data_atribuicao)
-      VALUES ($1, $2, NOW())
-      RETURNING *
-    `, [id, id_utilizador]);
-
+    const result = await pool.query(
+      `INSERT INTO avaria_tecnico (id_avaria, id_utilizador, data_atribuicao)
+       VALUES ($1, $2, NOW())
+       ON CONFLICT ON CONSTRAINT avaria_tecnico_pkey 
+       DO UPDATE SET data_atribuicao = EXCLUDED.data_atribuicao
+       RETURNING *`,
+      [id, id_utilizador]
+    );
     res.json({
       success: true,
       message: "Técnico atribuído com sucesso.",
-      atribuicao: result.rows[0]
+      atribuicao: result.rows[0],
     });
   } catch (err) {
     console.error(err);
@@ -391,12 +287,11 @@ app.post("/api/avarias/:id/tecnico", verifyToken, async (req, res) => {
   }
 });
 
-// Listar técnicos
 app.get("/api/tecnicos", verifyToken, async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT id_utilizador, nome, email, id_tipo_utilizador FROM utilizador WHERE id_tipo_utilizador = 2
-    `); // Correção de id_type_utilizador para id_tipo_utilizador
+    const result = await pool.query(
+      "SELECT id_utilizador, nome, email, id_tipo_utilizador FROM utilizador WHERE id_tipo_utilizador = 2"
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -404,50 +299,36 @@ app.get("/api/tecnicos", verifyToken, async (req, res) => {
   }
 });
 
-// Registar técnico
 app.post("/api/tecnicos", verifyToken, async (req, res) => {
   const { nome, email, password } = req.body;
-
   try {
-    const emailExists = await pool.query(
-      "SELECT * FROM utilizador WHERE email = $1",
-      [email]
-    );
-
+    const emailExists = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
     if (emailExists.rows.length > 0)
       return res.json({ success: false, message: "Email já registado." });
-
     const hashed = await bcrypt.hash(password, 10);
     const novoTecnico = await pool.query(
-      `INSERT INTO utilizador (id_tipo_utilizador, nome, email, password)
-       VALUES (2, $1, $2, $3) RETURNING *`,
+      "INSERT INTO utilizador (id_tipo_utilizador, nome, email, password) VALUES (2, $1, $2, $3) RETURNING *",
       [nome, email, hashed]
     );
-
-    res.status(201).json({
-      success: true,
-      tecnico: novoTecnico.rows[0]
-    });
+    res.status(201).json({ success: true, tecnico: novoTecnico.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao registar técnico." });
   }
 });
 
-// Notificações
 app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const result = await pool.query(`
-      SELECT DISTINCT n.*
-      FROM notificacao n
-      JOIN avaria a ON n.id_avaria = a.id_avaria
-      LEFT JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
-      WHERE a.id_utilizador = $1 OR at.id_utilizador = $1
-      ORDER BY n.data_emissao DESC
-    `, [id]);
-
+    const result = await pool.query(
+      `SELECT DISTINCT n.*
+       FROM notificacao n
+       JOIN avaria a ON n.id_avaria = a.id_avaria
+       LEFT JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
+       WHERE a.id_utilizador = $1 OR at.id_utilizador = $1
+       ORDER BY n.data_emissao DESC`,
+      [id]
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -455,39 +336,30 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
   }
 });
 
-// Criar notificação
 app.post("/api/notificacoes", verifyToken, async (req, res) => {
   const { id_avaria, mensagem } = req.body;
-
-  if (!id_avaria || !mensagem) {
-    return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem)." });
-  }
-
+  if (!id_avaria || !mensagem) return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem)." });
   try {
-    const result = await pool.query(`
-      INSERT INTO notificacao (id_avaria, mensagem)
-      VALUES ($1, $2)
-      RETURNING *
-    `, [id_avaria, mensagem]);
-
-    res.status(201).json({
-      success: true,
-      notificacao: result.rows[0]
-    });
+    const result = await pool.query(
+      `INSERT INTO notificacao (id_avaria, mensagem)
+       VALUES ($1, $2)
+       RETURNING *`,
+      [id_avaria, mensagem]
+    );
+    res.status(201).json({ success: true, notificacao: result.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao criar notificação." });
   }
 });
 
-// Upload de imagem
-app.post("/api/avarias/:id/imagem", verifyToken, upload.single('imagem'), async (req, res) => {
+app.post("/api/avarias/:id/imagem", verifyToken, upload.single("imagem"), async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query(
       `INSERT INTO imagem (id_avaria, imagem, nome, extensao)
        VALUES ($1, $2, $3, $4)`,
-      [id, req.file.buffer, req.file.originalname, 'jpg']
+      [id, req.file.buffer, req.file.originalname, "jpg"]
     );
     res.status(201).json({ success: true, message: "Imagem enviada com sucesso." });
   } catch (err) {
@@ -497,6 +369,4 @@ app.post("/api/avarias/:id/imagem", verifyToken, upload.single('imagem'), async 
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`Servidor a correr em http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`Servidor a correr em http://localhost:${PORT}`));

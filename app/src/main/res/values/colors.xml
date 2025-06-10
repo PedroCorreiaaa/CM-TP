@@ -9,6 +9,8 @@
 
     <!-- Prioridades -->
     <color name="prioridade_baixa">#FFD600</color>
+    <color name="prioridade_media">#FF9800</color>
+    <color name="prioridade_alta">#F44336</color>
     <color name="prioridade_pendente">#FF3D00</color>
 
     <!-- Texto -->

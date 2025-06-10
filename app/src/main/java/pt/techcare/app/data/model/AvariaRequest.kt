@@ -5,5 +5,5 @@ data class AvariaRequest(
     val descricao: String,
     val descricao_equipamento: String,
     val localizacao: String,
-    val grau_urgencia: String
+    val grau_urgencia: String? = null
 )

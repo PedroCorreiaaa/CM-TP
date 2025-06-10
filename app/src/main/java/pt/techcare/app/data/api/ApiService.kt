@@ -4,6 +4,7 @@ import okhttp3.MultipartBody
 import pt.techcare.app.data.model.AtribuirTecnicoRequest
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.model.AvariaRequest
+import pt.techcare.app.data.model.AvariaUpdateRequest
 import pt.techcare.app.data.model.Comentario
 import pt.techcare.app.data.model.ComentarioRequest
 import pt.techcare.app.data.model.LoginRequest
@@ -14,7 +15,6 @@ import pt.techcare.app.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -32,7 +32,6 @@ interface ApiService {
     suspend fun register(
         @Body request: RegisterRequest
     ): Response<LoginResponse>
-
 
     @GET("api/avarias")
     suspend fun getAvarias(): Response<List<Avaria>>
@@ -76,4 +75,10 @@ interface ApiService {
 
     @GET("api/relatorios/estatisticas")
     suspend fun getEstatisticas(): Response<RelatorioEstatisticas>
+
+    @PATCH("api/avarias/{id}")
+    suspend fun atualizarAvaria(
+        @Path("id") idAvaria: Int,
+        @Body request: AvariaUpdateRequest
+    ): Response<Avaria>
 }

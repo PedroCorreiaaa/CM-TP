@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.Avaria
+import pt.techcare.app.data.model.AvariaUpdateRequest
 import pt.techcare.app.data.repository.AvariaRepository
 
 class AvariaViewModel : ViewModel() {
@@ -46,6 +47,27 @@ class AvariaViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             Log.e("AvariaViewModel", "Exceção ao atribuir técnico: ${e.message}")
+            return false
+        }
+    }
+
+    suspend fun atualizarAvaria(idAvaria: Int, campos: Map<String, Any>): Boolean {
+        try {
+            Log.d("AvariaViewModel", "Atualizando avaria. idAvaria: $idAvaria, campos: $campos")
+            val updateRequest = AvariaUpdateRequest(
+                id_estado_avaria = campos["id_estado_avaria"] as? Int,
+                grau_urgencia = campos["grau_urgencia"] as? String
+            )
+            val response = repository.atualizarAvaria(idAvaria, updateRequest)
+            if (response.isSuccessful) {
+                Log.d("AvariaViewModel", "Avaria atualizada com sucesso. Response: ${response.body()}")
+                return true
+            } else {
+                Log.e("AvariaViewModel", "Erro na API: ${response.code()} - ${response.message()}")
+                return false
+            }
+        } catch (e: Exception) {
+            Log.e("AvariaViewModel", "Exceção ao atualizar avaria: ${e.message}")
             return false
         }
     }

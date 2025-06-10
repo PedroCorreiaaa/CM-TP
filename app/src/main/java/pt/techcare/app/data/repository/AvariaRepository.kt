@@ -4,6 +4,7 @@ import okhttp3.MultipartBody
 import pt.techcare.app.data.api.ApiService
 import pt.techcare.app.data.model.AtribuirTecnicoRequest
 import pt.techcare.app.data.model.AvariaRequest
+import pt.techcare.app.data.model.AvariaUpdateRequest
 
 class AvariaRepository(private val api: ApiService) {
 
@@ -13,4 +14,5 @@ class AvariaRepository(private val api: ApiService) {
     suspend fun registarAvaria(avaria: AvariaRequest) = api.registarAvaria(avaria)
     suspend fun uploadImagem(idAvaria: Int, imagem: MultipartBody.Part) = api.uploadImagem(idAvaria, imagem)
     suspend fun atribuirTecnico(idAvaria: Int, idTecnico: Int) = api.atribuirTecnico(idAvaria, AtribuirTecnicoRequest(idTecnico))
+    suspend fun atualizarAvaria(idAvaria: Int, campos: AvariaUpdateRequest) = api.atualizarAvaria(idAvaria, campos)
 }
