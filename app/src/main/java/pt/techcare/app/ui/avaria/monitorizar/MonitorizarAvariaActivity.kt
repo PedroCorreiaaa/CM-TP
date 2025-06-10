@@ -106,7 +106,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         val spinnerEstado = dialogView.findViewById<Spinner>(R.id.spinnerEstado)
         val spinnerPrioridade = dialogView.findViewById<Spinner>(R.id.spinnerPrioridade)
 
-        val estados = listOf("Todos", "Aberto", "Em Progresso", "Resolvido")
+        val estados = listOf("Todos", "Pendente", "Em Progresso", "Resolvido")
         val prioridades = listOf("Todas", "Alta", "Média", "Baixa")
 
         spinnerEstado.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, estados)
@@ -192,7 +192,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
         return card
     }
-
+    /**
     private fun mostrarDialogoAlterarEstado(idAvaria: Int) {
         val estados = arrayOf("Pendente", "Resolvido")
         val builder = AlertDialog.Builder(this)
@@ -224,5 +224,5 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
                 Toast.makeText(this@MonitorizarAvariaActivity, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
-    }
+    }**/
 }

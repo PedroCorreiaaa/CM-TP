@@ -34,13 +34,27 @@ class AvariaViewModel : ViewModel() {
         }
     }
 
-    suspend fun atribuirTecnico(idAvaria: Int, idUtilizador: Int): Boolean {
+    suspend fun atribuirTecnico(idAvaria: Int, idUtilizador: Int, idResponsavel: Int): Boolean {
         try {
             Log.d("AvariaViewModel", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $idUtilizador")
             val response = repository.atribuirTecnico(idAvaria, idUtilizador)
             if (response.isSuccessful) {
                 Log.d("AvariaViewModel", "Técnico atribuído com sucesso. Response: ${response.body()}")
-                return true
+
+                // Atualizar estado para "Em progresso" (id 3)
+                val updateRequest = AvariaUpdateRequest(
+                    id_estado_avaria = 3,
+                    grau_urgencia = null,
+                    id_responsavel = idResponsavel
+                )
+                val updateResponse = repository.atualizarAvaria(idAvaria, updateRequest)
+                if (updateResponse.isSuccessful) {
+                    Log.d("AvariaViewModel", "Estado atualizado para 'Em progresso'")
+                    return true
+                } else {
+                    Log.e("AvariaViewModel", "Erro ao atualizar estado: ${updateResponse.code()} - ${updateResponse.message()}")
+                    return false
+                }
             } else {
                 Log.e("AvariaViewModel", "Erro na API: ${response.code()} - ${response.message()}")
                 return false
@@ -51,12 +65,13 @@ class AvariaViewModel : ViewModel() {
         }
     }
 
-    suspend fun atualizarAvaria(idAvaria: Int, campos: Map<String, Any>): Boolean {
+    suspend fun atualizarAvaria(idAvaria: Int, campos: Map<String, Any>, idResponsavel: Int): Boolean {
         try {
             Log.d("AvariaViewModel", "Atualizando avaria. idAvaria: $idAvaria, campos: $campos")
             val updateRequest = AvariaUpdateRequest(
                 id_estado_avaria = campos["id_estado_avaria"] as? Int,
-                grau_urgencia = campos["grau_urgencia"] as? String
+                grau_urgencia = campos["grau_urgencia"] as? String,
+                id_responsavel = idResponsavel
             )
             val response = repository.atualizarAvaria(idAvaria, updateRequest)
             if (response.isSuccessful) {

@@ -117,8 +117,9 @@ class AvariaDetalheActivity : AppCompatActivity() {
     private fun atribuirTecnico(tecnicoId: Int) {
         lifecycleScope.launch {
             try {
-                Log.d("AvariaDetalhe", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $tecnicoId")
-                val sucesso = viewModel.atribuirTecnico(idAvaria, tecnicoId)
+                val idResponsavel = sessionManager.getUserId() ?: -1
+                Log.d("AvariaDetalhe", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $tecnicoId, idResponsavel: $idResponsavel")
+                val sucesso = viewModel.atribuirTecnico(idAvaria, tecnicoId, idResponsavel)
                 if (sucesso) {
                     Toast.makeText(this@AvariaDetalheActivity, "Técnico atribuído com sucesso!", Toast.LENGTH_SHORT).show()
                     carregarDetalhesAvaria(idAvaria)
@@ -132,12 +133,13 @@ class AvariaDetalheActivity : AppCompatActivity() {
         }
     }
 
+
     private fun atualizarPrioridade(prioridade: String) {
         lifecycleScope.launch {
             try {
-                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("grau_urgencia" to prioridade))
+                val idResponsavel = sessionManager.getUserId() ?: -1
+                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("grau_urgencia" to prioridade), idResponsavel)
                 if (sucesso) {
-                    Toast.makeText(this@AvariaDetalheActivity, "Prioridade atualizada com sucesso!", Toast.LENGTH_SHORT).show()
                     carregarDetalhesAvaria(idAvaria)
                 } else {
                     Toast.makeText(this@AvariaDetalheActivity, "Erro ao atualizar prioridade.", Toast.LENGTH_SHORT).show()
@@ -150,13 +152,14 @@ class AvariaDetalheActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoAlterarEstado() {
-        val estados = arrayOf("Pendente", "Resolvido")
+        val estados = arrayOf("Pendente", "Em progresso","Resolvido")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Alterar Estado")
         builder.setItems(estados) { dialog, which ->
             val novoEstado = when (estados[which]) {
                 "Pendente" -> 1
                 "Resolvido" -> 2
+                "Em progresso" -> 3
                 else -> 1
             }
             atualizarEstadoAvaria(novoEstado)
@@ -168,7 +171,8 @@ class AvariaDetalheActivity : AppCompatActivity() {
     private fun atualizarEstadoAvaria(novoEstado: Int) {
         lifecycleScope.launch {
             try {
-                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado))
+                val idResponsavel = sessionManager.getUserId() ?: -1
+                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado), idResponsavel)
                 if (sucesso) {
                     Toast.makeText(this@AvariaDetalheActivity, "Estado atualizado com sucesso!", Toast.LENGTH_SHORT).show()
                     carregarDetalhesAvaria(idAvaria)
@@ -181,6 +185,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

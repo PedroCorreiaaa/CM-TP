@@ -176,13 +176,25 @@ app.post("/api/avarias/:id/comentarios", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Erro ao adicionar comentário." });
   }
 });
-
 app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-  const { id_estado_avaria, grau_urgencia } = req.body;
-  if (!id_estado_avaria && !grau_urgencia) return res.status(400).json({ message: "Nenhum campo para atualizar." });
+  const { id_estado_avaria, grau_urgencia, id_responsavel } = req.body;
+
+  if (!id_responsavel)
+    return res.status(400).json({ message: "id_responsavel é obrigatório." });
+
+  if (!id_estado_avaria && !grau_urgencia)
+    return res.status(400).json({ message: "Nenhum campo para atualizar." });
+
+  const client = await pool.connect();
+
   try {
-    const result = await pool.query(
+    await client.query("BEGIN");
+
+    // ✅ Definir a variável de sessão corretamente com interpolação segura
+    await client.query(`SET LOCAL app.id_responsavel = '${parseInt(id_responsavel)}'`);
+
+    const result = await client.query(
       `UPDATE avaria 
        SET id_estado_avaria = COALESCE($1, id_estado_avaria), 
            grau_urgencia = COALESCE($2, grau_urgencia)
@@ -190,13 +202,25 @@ app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
        RETURNING *`,
       [id_estado_avaria, grau_urgencia, id]
     );
-    if (result.rows.length === 0) return res.status(404).json({ message: "Avaria não encontrada." });
+
+    if (result.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Avaria não encontrada." });
+    }
+
+    await client.query("COMMIT");
     res.json({ success: true, avaria: result.rows[0] });
+
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error(err);
     res.status(500).json({ message: "Erro ao atualizar a avaria." });
+  } finally {
+    client.release();
   }
 });
+
+
 
 app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
