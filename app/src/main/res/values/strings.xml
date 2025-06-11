@@ -58,4 +58,6 @@
     <string name="btn_menu">Menu</string>
     <string name="btn_user">Utilizador</string>
     <string name="logo">Logo da aplicação TechCare</string>
+    <string name="notificacoes_titulo">Notificações</string>
+    <string name="notificacoes_subtitulo">Veja as atualizações das avarias</string>
 </resources>

@@ -3,25 +3,26 @@ package pt.techcare.app.ui.home.user
 import android.content.Intent
 import android.os.Bundle
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import pt.techcare.app.R
 import pt.techcare.app.databinding.ActivityHomeUserBinding
 import pt.techcare.app.ui.avaria.monitorizar.MonitorizarAvariaActivity
 import pt.techcare.app.ui.avaria.registar.RegistarAvariaActivity
 import pt.techcare.app.ui.login.LoginActivity
+import pt.techcare.app.ui.notificacoes.NotificacoesUserActivity
 import pt.techcare.app.util.SessionManager
 
 class HomeUserActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeUserBinding
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sessionManager = SessionManager(this)
+        sessionManager = SessionManager(this)
 
         binding.btnLogout.setOnClickListener {
             val popup = PopupMenu(this, it)
@@ -49,7 +50,7 @@ class HomeUserActivity : AppCompatActivity() {
         }
 
         binding.btnNotificacoes.setOnClickListener {
-            Toast.makeText(this, "Funcionalidade de notificações ainda não implementada", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, NotificacoesUserActivity::class.java))
         }
     }
 }

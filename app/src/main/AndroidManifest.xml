@@ -17,7 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,5 +36,8 @@
         <activity android:name=".ui.avaria.monitorizar.MonitorizarAvariaActivity" />
         <activity android:name=".ui.avaria.detalhe.AvariaDetalheActivity" />
         <activity android:name=".ui.avaria.detalhe.SelecionarTecnicoActivity" />
+        <activity android:name=".ui.notificacoes.NotificacoesGestorActivity" />
+        <activity android:name=".ui.notificacoes.NotificacoesTecnicoActivity" />
+        <activity android:name=".ui.notificacoes.NotificacoesUserActivity"  />
     </application>
 </manifest>

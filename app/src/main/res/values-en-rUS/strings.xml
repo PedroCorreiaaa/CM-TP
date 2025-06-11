@@ -58,4 +58,6 @@
     <string name="btn_menu">Menu</string>
     <string name="btn_user">User</string>
     <string name="logo">TechCare App Logo</string>
+    <string name="notificacoes_titulo">Notifications</string>
+    <string name="notificacoes_subtitulo">View updates on your breakdowns</string>
 </resources>

@@ -9,19 +9,21 @@ import pt.techcare.app.databinding.ActivityHomeGestorBinding
 import pt.techcare.app.ui.avaria.monitorizar.MonitorizarAvariaActivity
 import pt.techcare.app.ui.avaria.registar.RegistarAvariaActivity
 import pt.techcare.app.ui.login.LoginActivity
+import pt.techcare.app.ui.notificacoes.NotificacoesGestorActivity
 import pt.techcare.app.ui.relatorios.RelatorioActivity
 import pt.techcare.app.util.SessionManager
 
 class HomeGestorActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeGestorBinding
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeGestorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sessionManager = SessionManager(this)
+        sessionManager = SessionManager(this)
 
         binding.btnLogout.setOnClickListener {
             val popup = PopupMenu(this, it)
@@ -50,6 +52,10 @@ class HomeGestorActivity : AppCompatActivity() {
 
         binding.btnRelatorios.setOnClickListener {
             startActivity(Intent(this, RelatorioActivity::class.java))
+        }
+
+        binding.btnNotificacoes.setOnClickListener {
+            startActivity(Intent(this, NotificacoesGestorActivity::class.java))
         }
     }
 }

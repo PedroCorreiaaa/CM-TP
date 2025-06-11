@@ -19,7 +19,7 @@ app.get("/", verifyToken, (req, res) => {
   res.send("API TechCare está online");
 });
 
-app.post("/api/login", verifyToken, async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const userQuery = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
@@ -44,14 +44,14 @@ app.post("/api/login", verifyToken, async (req, res) => {
 });
 
 app.post("/api/register", verifyToken, async (req, res) => {
-  const { nome, email, password } = req.body;
+  const { nome, email, password, id_tipo_utilizador } = req.body;
   try {
     const emailExists = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
     if (emailExists.rows.length > 0) return res.json({ success: false, message: "Email já registado." });
     const hashed = await bcrypt.hash(password, 10);
     const newUser = await pool.query(
-      "INSERT INTO utilizador (id_tipo_utilizador, nome, email, password) VALUES (1, $1, $2, $3) RETURNING *",
-      [nome, email, hashed]
+      "INSERT INTO utilizador (id_tipo_utilizador, nome, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
+      [id_tipo_utilizador || 1, nome, email, hashed]
     );
     const user = newUser.rows[0];
     res.json({
@@ -371,11 +371,18 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
        FROM notificacao n
        JOIN avaria a ON n.id_avaria = a.id_avaria
        LEFT JOIN avaria_tecnico at ON a.id_avaria = at.id_avaria
-       WHERE a.id_utilizador = $1 OR at.id_utilizador = $1
+       WHERE n.id_utilizador = $1
        ORDER BY n.data_emissao DESC`,
       [id]
     );
-    res.json(result.rows);
+    const notificacoes = result.rows.map((row) => ({
+      id_notificacao: row.id_notificacao,
+      id_avaria: row.id_avaria,
+      mensagem: row.mensagem,
+      data_emissao: new Date(row.data_emissao).toISOString(),
+      id_utilizador: row.id_utilizador,
+    }));
+    res.json(notificacoes);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao obter notificações." });
@@ -383,14 +390,15 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
 });
 
 app.post("/api/notificacoes", verifyToken, async (req, res) => {
-  const { id_avaria, mensagem } = req.body;
-  if (!id_avaria || !mensagem) return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem)." });
+  const { id_avaria, mensagem, id_utilizador } = req.body;
+  if (!id_avaria || !mensagem || !id_utilizador)
+    return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem, id_utilizador)." });
   try {
     const result = await pool.query(
-      `INSERT INTO notificacao (id_avaria, mensagem)
-       VALUES ($1, $2)
+      `INSERT INTO notificacao (id_avaria, mensagem, id_utilizador, data_emissao)
+       VALUES ($1, $2, $3, NOW())
        RETURNING *`,
-      [id_avaria, mensagem]
+      [id_avaria, mensagem, id_utilizador]
     );
     res.status(201).json({ success: true, notificacao: result.rows[0] });
   } catch (err) {

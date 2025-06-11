@@ -9,6 +9,9 @@ import pt.techcare.app.data.model.Comentario
 import pt.techcare.app.data.model.ComentarioRequest
 import pt.techcare.app.data.model.LoginRequest
 import pt.techcare.app.data.model.LoginResponse
+import pt.techcare.app.data.model.Notificacao
+import pt.techcare.app.data.model.NotificacaoRequest
+import pt.techcare.app.data.model.NotificacaoResponse
 import pt.techcare.app.data.model.RegisterRequest
 import pt.techcare.app.data.model.RelatorioEstatisticas
 import pt.techcare.app.data.model.User
@@ -90,4 +93,12 @@ interface ApiService {
         @Path("id") idAvaria: Int,
         @Body request: AvariaUpdateRequest
     ): Response<Avaria>
+
+    @GET("api/user/{id}/notificacoes")
+    suspend fun getNotificacoes(@Path("id") id: Int): Response<List<Notificacao>>
+
+    @POST("api/notificacoes")
+    suspend fun criarNotificacao(
+        @Body request: NotificacaoRequest
+    ): Response<NotificacaoResponse>
 }
