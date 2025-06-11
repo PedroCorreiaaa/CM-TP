@@ -15,10 +15,12 @@ data class Notificacao(
 
     val tipo: String
         get() = when {
-            mensagem.contains("atribuído") -> "Técnico atribuído"
-            mensagem.contains("resolvida") -> "Avaria resolvida"
-            mensagem.contains("criada") -> "Avaria criada"
-            mensagem.contains("prioridade") -> "Prioridade alterada"
-            else -> "Desconhecido"
+            mensagem.lowercase().contains("atribuído") -> "Técnico atribuído"
+            mensagem.lowercase().contains("resolvida") -> "Avaria resolvida"
+            mensagem.lowercase().contains("criada") -> "Avaria criada"
+            mensagem.lowercase().contains("prioridade") -> "Prioridade alterada"
+            else -> {
+                "Técnico atribuído"
+            }
         }
 }
