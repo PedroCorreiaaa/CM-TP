@@ -31,7 +31,6 @@ class RelatorioActivity : AppCompatActivity() {
             }
         }
 
-        // Carregar sem filtro inicialmente
         viewModel.carregarEstatisticas()
 
         binding.btnFiltrar.setOnClickListener {

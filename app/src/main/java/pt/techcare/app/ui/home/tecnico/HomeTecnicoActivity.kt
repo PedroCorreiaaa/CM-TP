@@ -10,6 +10,7 @@ import pt.techcare.app.ui.avaria.monitorizar.MonitorizarAvariaActivity
 import pt.techcare.app.ui.avaria.registar.RegistarAvariaActivity
 import pt.techcare.app.ui.login.LoginActivity
 import pt.techcare.app.ui.notificacoes.NotificacoesTecnicoActivity
+import pt.techcare.app.ui.relatorios.RelatorioActivity
 import pt.techcare.app.util.SessionManager
 
 class HomeTecnicoActivity : AppCompatActivity() {
@@ -51,6 +52,10 @@ class HomeTecnicoActivity : AppCompatActivity() {
 
         binding.btnNotificacoes.setOnClickListener {
             startActivity(Intent(this, NotificacoesTecnicoActivity::class.java))
+        }
+
+        binding.btnRelatorios.setOnClickListener {
+            startActivity(Intent(this, RelatorioActivity::class.java))
         }
     }
 }
