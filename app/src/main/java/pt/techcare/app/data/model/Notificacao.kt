@@ -17,8 +17,7 @@ data class Notificacao(
         get() = when {
             mensagem.lowercase().contains("atribuído") -> "Técnico atribuído"
             mensagem.lowercase().contains("resolvida") -> "Avaria resolvida"
-            mensagem.lowercase().contains("criada") -> "Avaria criada"
-            mensagem.lowercase().contains("prioridade") -> "Prioridade alterada"
+            mensagem.lowercase().contains("registada") -> "Avaria criada"
             else -> {
                 "Técnico atribuído"
             }

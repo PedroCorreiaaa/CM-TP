@@ -389,21 +389,55 @@ app.get("/api/user/:id/notificacoes", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/api/notificacoes", verifyToken, async (req, res) => {
-  const { id_avaria, mensagem, id_utilizador } = req.body;
-  if (!id_avaria || !mensagem || !id_utilizador)
-    return res.status(400).json({ message: "Dados em falta (id_avaria, mensagem, id_utilizador)." });
+app.get("/api/relatorios/estatisticas", verifyToken, async (req, res) => {
   try {
-    const result = await pool.query(
-      `INSERT INTO notificacao (id_avaria, mensagem, id_utilizador, data_emissao)
-       VALUES ($1, $2, $3, NOW())
-       RETURNING *`,
-      [id_avaria, mensagem, id_utilizador]
-    );
-    res.status(201).json({ success: true, notificacao: result.rows[0] });
+    const { datas, tipoEquipamento, localizacao } = req.query;
+
+    let filtroWhere = "WHERE 1=1";
+    const params = [];
+
+    if (datas) {
+      const [dataInicio, dataFim] = datas.split(" a ");
+      if (dataInicio && dataFim) {
+        params.push(dataInicio, dataFim);
+        filtroWhere += ` AND a.data_registo BETWEEN $${params.length - 1} AND $${params.length}`;
+      }
+    }
+
+    if (tipoEquipamento) {
+      params.push(`%${tipoEquipamento}%`);
+      filtroWhere += ` AND a.descricao_equipamento ILIKE $${params.length}`;
+    }
+
+    if (localizacao) {
+      params.push(`%${localizacao}%`);
+      filtroWhere += ` AND a.localizacao ILIKE $${params.length}`;
+    }
+
+    const totalQuery = `SELECT COUNT(*) AS total FROM avaria a ${filtroWhere}`;
+    const resolvidasQuery = `SELECT COUNT(*) AS resolvidas FROM avaria a ${filtroWhere} AND a.id_estado_avaria = 2`;
+    const tempoMedioQuery = `
+      SELECT
+        COALESCE(ROUND(AVG(DATE_PART('day', at.data_resolucao - a.data_registo))), 0) AS tempo_medio_dias
+      FROM avaria a
+      JOIN avaria_tecnico at ON at.id_avaria = a.id_avaria
+      ${filtroWhere} AND a.id_estado_avaria = 2
+    `;
+
+    // Executa as queries
+    const { rows: totalRows } = await pool.query(totalQuery, params);
+    const { rows: resolvidasRows } = await pool.query(resolvidasQuery, params);
+    const { rows: tempoRows } = await pool.query(tempoMedioQuery, params);
+
+    res.json({
+      total_avarias: parseInt(totalRows[0].total, 10),
+      resolvidas: parseInt(resolvidasRows[0].resolvidas, 10),
+      tempo_medio_dias: parseInt(tempoRows[0].tempo_medio_dias, 10)
+    });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Erro ao criar notificação." });
+    console.error("Erro ao obter estatísticas:", err);
+    res.status(500).json({ erro: "Erro ao obter estatísticas" });
   }
 });
 

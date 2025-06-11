@@ -25,6 +25,8 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ApiService {
     @POST("api/login")
@@ -86,7 +88,12 @@ interface ApiService {
     ): Response<User>
 
     @GET("api/relatorios/estatisticas")
-    suspend fun getEstatisticas(): Response<RelatorioEstatisticas>
+    suspend fun getEstatisticas(
+        @Query("datas") datas: String? = null,
+        @Query("tipoEquipamento") tipoEquipamento: String? = null,
+        @Query("localizacao") localizacao: String? = null
+    ): Response<RelatorioEstatisticas>
+
 
     @PATCH("api/avarias/{id}")
     suspend fun atualizarAvaria(
@@ -97,8 +104,4 @@ interface ApiService {
     @GET("api/user/{id}/notificacoes")
     suspend fun getNotificacoes(@Path("id") id: Int): Response<List<Notificacao>>
 
-    @POST("api/notificacoes")
-    suspend fun criarNotificacao(
-        @Body request: NotificacaoRequest
-    ): Response<NotificacaoResponse>
 }

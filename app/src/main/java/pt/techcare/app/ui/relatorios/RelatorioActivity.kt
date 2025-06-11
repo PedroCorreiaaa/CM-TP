@@ -31,11 +31,22 @@ class RelatorioActivity : AppCompatActivity() {
             }
         }
 
+        // Carregar sem filtro inicialmente
         viewModel.carregarEstatisticas()
 
         binding.btnFiltrar.setOnClickListener {
-            Toast.makeText(this, "Funcionalidade de filtragem ainda não implementada", Toast.LENGTH_SHORT).show()
+            val datasFiltro = binding.inputDatas.text.toString().trim()
+            val tipoEquipamentoFiltro = binding.inputTipoEquipamento.text.toString().trim()
+            val localizacaoFiltro = binding.inputLocalizacao.text.toString().trim()
+
+            if (datasFiltro.isEmpty() && tipoEquipamentoFiltro.isEmpty() && localizacaoFiltro.isEmpty()) {
+                Toast.makeText(this, "Por favor, preencha pelo menos um filtro para aplicar.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.carregarEstatisticasComFiltro(datasFiltro, tipoEquipamentoFiltro, localizacaoFiltro)
         }
+
 
         binding.btnVerDetalhes.setOnClickListener {
             Toast.makeText(this, "Funcionalidade de ver detalhes ainda não implementada", Toast.LENGTH_SHORT).show()

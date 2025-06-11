@@ -23,4 +23,14 @@ class RelatorioViewModel : ViewModel() {
             }
         }
     }
+
+    fun carregarEstatisticasComFiltro(datas: String?, tipoEquipamento: String?, localizacao: String?) {
+        viewModelScope.launch {
+            val response = repository.getEstatisticas(datas, tipoEquipamento, localizacao)
+            if (response.isSuccessful) {
+                _estatisticas.value = response.body()
+            }
+        }
+    }
 }
+
