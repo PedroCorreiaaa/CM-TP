@@ -176,14 +176,15 @@ app.post("/api/avarias/:id/comentarios", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Erro ao adicionar comentário." });
   }
 });
+
 app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
-  const { id_estado_avaria, grau_urgencia, id_responsavel } = req.body;
+  const { id_estado_avaria, grau_urgencia, id_responsavel, resolucao } = req.body;
 
   if (!id_responsavel)
     return res.status(400).json({ message: "id_responsavel é obrigatório." });
 
-  if (!id_estado_avaria && !grau_urgencia)
+  if (!id_estado_avaria && !grau_urgencia && !resolucao)
     return res.status(400).json({ message: "Nenhum campo para atualizar." });
 
   const client = await pool.connect();
@@ -191,21 +192,40 @@ app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    // ✅ Definir a variável de sessão corretamente com interpolação segura
     await client.query(`SET LOCAL app.id_responsavel = '${parseInt(id_responsavel)}'`);
+
+    const checkState = await client.query(
+      `SELECT id_estado_avaria FROM avaria WHERE id_avaria = $1`,
+      [id]
+    );
+    if (checkState.rows[0].id_estado_avaria === 2) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: "Avaria já resolvida, não pode ser alterada." });
+    }
 
     const result = await client.query(
       `UPDATE avaria 
        SET id_estado_avaria = COALESCE($1, id_estado_avaria), 
-           grau_urgencia = COALESCE($2, grau_urgencia)
-       WHERE id_avaria = $3 
+           grau_urgencia = COALESCE($2, grau_urgencia),
+           resolucao = COALESCE($3, resolucao)
+       WHERE id_avaria = $4 
        RETURNING *`,
-      [id_estado_avaria, grau_urgencia, id]
+      [id_estado_avaria, grau_urgencia, resolucao, id]
     );
 
     if (result.rows.length === 0) {
       await client.query("ROLLBACK");
       return res.status(404).json({ message: "Avaria não encontrada." });
+    }
+
+    if (id_estado_avaria === 2) {
+      await client.query(
+        `UPDATE avaria_tecnico 
+         SET data_resolucao = NOW()
+         WHERE id_avaria = $1 
+         AND id_utilizador = (SELECT id_utilizador FROM avaria_tecnico WHERE id_avaria = $1 ORDER BY data_atribuicao DESC LIMIT 1)`,
+        [id]
+      );
     }
 
     await client.query("COMMIT");
@@ -219,8 +239,6 @@ app.patch("/api/avarias/:id", verifyToken, async (req, res) => {
     client.release();
   }
 });
-
-
 
 app.get("/api/avarias/user/:id", verifyToken, async (req, res) => {
   const { id } = req.params;

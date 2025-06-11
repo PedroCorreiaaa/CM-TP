@@ -4,10 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -63,9 +65,10 @@ class AvariaDetalheActivity : AppCompatActivity() {
             binding.txtPrioridade.visibility = View.GONE
         }
 
-        binding.btnAlterarEstado.visibility = if (userType == 2 || userType == 3) View.VISIBLE else View.GONE
+        binding.btnAlterarEstado.visibility = if (userType == 2) View.VISIBLE else View.GONE
+        binding.btnAlterarEstado.text = "Assinalar como Resolvida"
         binding.btnAlterarEstado.setOnClickListener {
-            mostrarDialogoAlterarEstado()
+            mostrarDialogoAssinalarResolvida()
         }
 
         if (idAvaria != -1) {
@@ -88,7 +91,14 @@ class AvariaDetalheActivity : AppCompatActivity() {
             try {
                 val response = ApiClient.apiService.getAvariaById(id)
                 if (response.isSuccessful) {
-                    response.body()?.let { preencherDetalhes(it) }
+                    response.body()?.let { avaria ->
+                        preencherDetalhes(avaria)
+                        if (avaria.estado?.id_estado_avaria == 2) {
+                            binding.txtPrioridade.isEnabled = false
+                            binding.btnAlterarTecnico.isEnabled = false
+                            binding.btnAlterarEstado.isEnabled = false
+                        }
+                    }
                 } else {
                     Toast.makeText(this@AvariaDetalheActivity, "Erro ao carregar detalhes: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
@@ -133,7 +143,6 @@ class AvariaDetalheActivity : AppCompatActivity() {
         }
     }
 
-
     private fun atualizarPrioridade(prioridade: String) {
         lifecycleScope.launch {
             try {
@@ -151,33 +160,37 @@ class AvariaDetalheActivity : AppCompatActivity() {
         }
     }
 
-    private fun mostrarDialogoAlterarEstado() {
-        val estados = arrayOf("Pendente", "Em progresso","Resolvido")
+    private fun mostrarDialogoAssinalarResolvida() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Alterar Estado")
-        builder.setItems(estados) { dialog, which ->
-            val novoEstado = when (estados[which]) {
-                "Pendente" -> 1
-                "Resolvido" -> 2
-                "Em progresso" -> 3
-                else -> 1
+        builder.setTitle("Assinalar como Resolvida")
+
+        val input = EditText(this)
+        input.hint = "Insira a resolução"
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("Confirmar") { _, _ ->
+            val resolucao = input.text.toString().trim()
+            if (resolucao.isNotEmpty()) {
+                atualizarEstadoAvaria(2, resolucao)
+            } else {
+                Toast.makeText(this@AvariaDetalheActivity, "A resolução não pode estar vazia.", Toast.LENGTH_SHORT).show()
             }
-            atualizarEstadoAvaria(novoEstado)
-            dialog.dismiss()
         }
+        builder.setNegativeButton("Cancelar", null)
         builder.show()
     }
 
-    private fun atualizarEstadoAvaria(novoEstado: Int) {
+    private fun atualizarEstadoAvaria(novoEstado: Int, resolucao: String) {
         lifecycleScope.launch {
             try {
                 val idResponsavel = sessionManager.getUserId() ?: -1
-                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado), idResponsavel)
+                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado, "resolucao" to resolucao), idResponsavel)
                 if (sucesso) {
-                    Toast.makeText(this@AvariaDetalheActivity, "Estado atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AvariaDetalheActivity, "Avaria assinalada como resolvida!", Toast.LENGTH_SHORT).show()
                     carregarDetalhesAvaria(idAvaria)
                 } else {
-                    Toast.makeText(this@AvariaDetalheActivity, "Erro ao atualizar estado.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AvariaDetalheActivity, "Erro ao assinalar como resolvida.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Log.e("AvariaDetalhe", "Erro ao atualizar estado: ${e.message}")
@@ -185,7 +198,6 @@ class AvariaDetalheActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

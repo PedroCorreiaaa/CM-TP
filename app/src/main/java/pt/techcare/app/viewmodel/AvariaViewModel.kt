@@ -40,8 +40,7 @@ class AvariaViewModel : ViewModel() {
             val response = repository.atribuirTecnico(idAvaria, idUtilizador)
             if (response.isSuccessful) {
                 Log.d("AvariaViewModel", "Técnico atribuído com sucesso. Response: ${response.body()}")
-
-                // Atualizar estado para "Em progresso" (id 3)
+                
                 val updateRequest = AvariaUpdateRequest(
                     id_estado_avaria = 3,
                     grau_urgencia = null,
@@ -71,7 +70,8 @@ class AvariaViewModel : ViewModel() {
             val updateRequest = AvariaUpdateRequest(
                 id_estado_avaria = campos["id_estado_avaria"] as? Int,
                 grau_urgencia = campos["grau_urgencia"] as? String,
-                id_responsavel = idResponsavel
+                id_responsavel = idResponsavel,
+                resolucao = campos["resolucao"] as? String
             )
             val response = repository.atualizarAvaria(idAvaria, updateRequest)
             if (response.isSuccessful) {

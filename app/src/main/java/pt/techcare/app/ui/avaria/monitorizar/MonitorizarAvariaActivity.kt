@@ -11,11 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import pt.techcare.app.R
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.databinding.ActivityMonitorizarAvariaBinding
@@ -184,6 +182,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
             textSize = 14f
             setTextColor(resources.getColor(R.color.texto_principal))
         }
+
         card.addView(titulo)
         card.addView(prioridade)
         card.addView(estado)
@@ -192,37 +191,4 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
         return card
     }
-    /**
-    private fun mostrarDialogoAlterarEstado(idAvaria: Int) {
-        val estados = arrayOf("Pendente", "Resolvido")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Alterar Estado")
-        builder.setItems(estados) { _, which ->
-            val novoEstado = when (estados[which]) {
-                "Pendente" -> 1
-                "Resolvido" -> 2
-                else -> 1
-            }
-            atualizarEstadoAvaria(idAvaria, novoEstado)
-        }
-        builder.show()
-    }
-
-    private fun atualizarEstadoAvaria(idAvaria: Int, novoEstado: Int) {
-        lifecycleScope.launch {
-            try {
-                val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado))
-                if (sucesso) {
-                    Toast.makeText(this@MonitorizarAvariaActivity, "Estado atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-                    val userType = sessionManager.getUserType()
-                    val userId = sessionManager.getUserId()
-                    viewModel.carregarAvarias(userType, userId)
-                } else {
-                    Toast.makeText(this@MonitorizarAvariaActivity, "Erro ao atualizar estado.", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@MonitorizarAvariaActivity, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }**/
 }

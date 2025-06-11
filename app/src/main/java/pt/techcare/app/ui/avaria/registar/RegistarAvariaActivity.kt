@@ -74,7 +74,7 @@ class RegistarAvariaActivity : AppCompatActivity() {
                                 Toast.makeText(this@RegistarAvariaActivity, "Erro ao carregar a imagem.", Toast.LENGTH_SHORT).show()
                             }
                         }
-                        Toast.makeText(this@RegistarAvariaActivity, "Avaria registada com sucesso ✅", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@RegistarAvariaActivity, "Avaria registada com sucesso", Toast.LENGTH_LONG).show()
                         finish()
                     } else {
                         Toast.makeText(this@RegistarAvariaActivity, "Erro ao registar avaria: ${response.code()}", Toast.LENGTH_SHORT).show()
