@@ -65,12 +65,6 @@ class AvariaDetalheActivity : AppCompatActivity() {
             binding.txtPrioridade.visibility = View.GONE
         }
 
-        binding.btnAlterarEstado.visibility = if (userType == 2) View.VISIBLE else View.GONE
-        binding.btnAlterarEstado.text = "Assinalar como Resolvida"
-        binding.btnAlterarEstado.setOnClickListener {
-            mostrarDialogoAssinalarResolvida()
-        }
-
         if (idAvaria != -1) {
             carregarDetalhesAvaria(idAvaria)
         } else {
@@ -93,10 +87,23 @@ class AvariaDetalheActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let { avaria ->
                         preencherDetalhes(avaria)
-                        if (avaria.estado?.id_estado_avaria == 2) {
+
+                        val estadoResolvido = avaria.estado?.id_estado_avaria == 2
+
+                        if (estadoResolvido) {
                             binding.txtPrioridade.isEnabled = false
                             binding.btnAlterarTecnico.isEnabled = false
-                            binding.btnAlterarEstado.isEnabled = false
+                            binding.btnAlterarEstado.visibility = View.GONE
+                        } else {
+                            if (sessionManager.getUserType() == 2) {
+                                binding.btnAlterarEstado.visibility = View.VISIBLE
+                                binding.btnAlterarEstado.text = "Assinalar como Resolvida"
+                                binding.btnAlterarEstado.setOnClickListener {
+                                    mostrarDialogoAssinalarResolvida()
+                                }
+                            } else {
+                                binding.btnAlterarEstado.visibility = View.GONE
+                            }
                         }
                     }
                 } else {
