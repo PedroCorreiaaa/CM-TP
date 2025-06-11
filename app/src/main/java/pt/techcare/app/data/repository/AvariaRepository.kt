@@ -15,4 +15,6 @@ class AvariaRepository(private val api: ApiService) {
     suspend fun uploadImagem(idAvaria: Int, imagem: MultipartBody.Part) = api.uploadImagem(idAvaria, imagem)
     suspend fun atribuirTecnico(idAvaria: Int, idTecnico: Int) = api.atribuirTecnico(idAvaria, AtribuirTecnicoRequest(idTecnico))
     suspend fun atualizarAvaria(idAvaria: Int, campos: AvariaUpdateRequest) = api.atualizarAvaria(idAvaria, campos)
+    suspend fun getTecnicos() = api.getTecnicos()
+    suspend fun registrarTecnico(nome: String, email: String, password: String) = api.registrarTecnico(nome, email, password)
 }

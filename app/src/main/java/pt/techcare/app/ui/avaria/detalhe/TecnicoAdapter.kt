@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import pt.techcare.app.data.model.User
 
 class TecnicoAdapter(
-    private val tecnicos: List<User>,
+    private var tecnicos: List<User>,
     private val onTecnicoSelected: (User) -> Unit
 ) : RecyclerView.Adapter<TecnicoAdapter.TecnicoViewHolder>() {
 
@@ -29,4 +29,9 @@ class TecnicoAdapter(
     }
 
     override fun getItemCount(): Int = tecnicos.size
+
+    fun updateList(newTecnicos: List<User>) {
+        tecnicos = newTecnicos
+        notifyDataSetChanged()
+    }
 }

@@ -14,6 +14,8 @@ import pt.techcare.app.data.model.RelatorioEstatisticas
 import pt.techcare.app.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -22,7 +24,6 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
-
     @POST("api/login")
     suspend fun login(
         @Body request: LoginRequest
@@ -72,6 +73,14 @@ interface ApiService {
 
     @GET("api/tecnicos")
     suspend fun getTecnicos(): Response<List<User>>
+
+    @FormUrlEncoded
+    @POST("api/tecnicos")
+    suspend fun registrarTecnico(
+        @Field("nome") nome: String,
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): Response<User>
 
     @GET("api/relatorios/estatisticas")
     suspend fun getEstatisticas(): Response<RelatorioEstatisticas>

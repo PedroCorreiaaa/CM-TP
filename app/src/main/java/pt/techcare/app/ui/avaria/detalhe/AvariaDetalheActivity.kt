@@ -18,6 +18,7 @@ import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.repository.AvariaRepository
 import pt.techcare.app.databinding.ActivityAvariaDetalheBinding
+import pt.techcare.app.ui.avaria.detalhe.SelecionarTecnicoActivity
 import pt.techcare.app.util.SessionManager
 import pt.techcare.app.viewmodel.AvariaViewModel
 

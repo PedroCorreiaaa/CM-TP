@@ -9,6 +9,7 @@ require("dotenv").config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const authRoutes = require("./routes/auth");
 const verifyToken = require("./middleware/verifyToken");
@@ -342,11 +343,14 @@ app.get("/api/tecnicos", verifyToken, async (req, res) => {
 });
 
 app.post("/api/tecnicos", verifyToken, async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ success: false, message: "Corpo da requisição está vazio" });
+  }
   const { nome, email, password } = req.body;
   try {
     const emailExists = await pool.query("SELECT * FROM utilizador WHERE email = $1", [email]);
     if (emailExists.rows.length > 0)
-      return res.json({ success: false, message: "Email já registado." });
+      return res.status(400).json({ success: false, message: "Email já registado." });
     const hashed = await bcrypt.hash(password, 10);
     const novoTecnico = await pool.query(
       "INSERT INTO utilizador (id_tipo_utilizador, nome, email, password) VALUES (2, $1, $2, $3) RETURNING *",
