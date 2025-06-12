@@ -63,7 +63,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
         if (lista.isEmpty()) {
             val textoVazio = TextView(this).apply {
-                text = "Sem resultados"
+                text = R.string.hint_sem_resultados.toString()
                 textSize = 16f
                 gravity = Gravity.CENTER
                 setTextColor(resources.getColor(R.color.texto_secundario))
@@ -111,14 +111,14 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
         spinnerPrioridade.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, prioridades)
 
         AlertDialog.Builder(this)
-            .setTitle("Filtrar avarias")
+            .setTitle(R.string.text_filtrar_avarias)
             .setView(dialogView)
-            .setPositiveButton("Aplicar") { _, _ ->
+            .setPositiveButton(R.string.btn_aplicar) { _, _ ->
                 val estadoSelecionado = spinnerEstado.selectedItem.toString()
                 val prioridadeSelecionada = spinnerPrioridade.selectedItem.toString()
                 aplicarFiltroAvancado(estadoSelecionado, prioridadeSelecionada)
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(R.string.btn_cancelar, null)
             .show()
     }
 

@@ -79,7 +79,7 @@ class SelecionarTecnicoActivity : AppCompatActivity() {
 
     private fun mostrarDialogoCriarTecnico() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Criar Novo Técnico")
+        builder.setTitle(R.string.text_registar_novo_tecnico)
 
         val layout = android.view.LayoutInflater.from(this).inflate(R.layout.dialog_criar_tecnico, null)
         val etNome = layout.findViewById<EditText>(R.id.etNome)
@@ -88,7 +88,7 @@ class SelecionarTecnicoActivity : AppCompatActivity() {
 
         builder.setView(layout)
 
-        builder.setPositiveButton("Criar") { _, _ ->
+        builder.setPositiveButton(R.string.btn_criar) { _, _ ->
             val nome = etNome.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -96,10 +96,10 @@ class SelecionarTecnicoActivity : AppCompatActivity() {
             if (nome.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 criarTecnico(nome, email, password)
             } else {
-                Toast.makeText(this@SelecionarTecnicoActivity, "Todos os campos são obrigatórios.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SelecionarTecnicoActivity, R.string.toast_preencha_campos, Toast.LENGTH_SHORT).show()
             }
         }
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
+        builder.setNegativeButton(R.string.btn_cancelar) { dialog, _ ->
             dialog.dismiss()
         }
         builder.show()
@@ -115,7 +115,7 @@ class SelecionarTecnicoActivity : AppCompatActivity() {
                     carregarTecnicos()
                 } else {
                     val errorMsg = when (response.code()) {
-                        400 -> "Email já registado."
+                        400 -> R.string.erro_email_registado.toString()
                         else -> "Erro ao criar técnico: ${response.code()} - ${response.errorBody()?.string()}"
                     }
                     Toast.makeText(this@SelecionarTecnicoActivity, errorMsg, Toast.LENGTH_SHORT).show()

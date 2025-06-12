@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
+import pt.techcare.app.R
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.repository.AuthRepository
 import pt.techcare.app.databinding.ActivityLoginBinding
@@ -53,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
             if (email.isNotBlank() && password.isNotBlank()) {
                 viewModel.login(email, password)
             } else {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_preencha_campos, Toast.LENGTH_SHORT).show()
             }
         }
 

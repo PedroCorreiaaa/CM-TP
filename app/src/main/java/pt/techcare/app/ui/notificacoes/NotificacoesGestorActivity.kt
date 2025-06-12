@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
+import pt.techcare.app.R
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.repository.AvariaRepository
 import pt.techcare.app.databinding.ActivityNotificacoesBinding
@@ -43,7 +44,7 @@ class NotificacoesGestorActivity : AppCompatActivity() {
                     response.body()?.let { notificacoes ->
                         notificacaoAdapter.updateList(notificacoes)
                     } ?: run {
-                        Toast.makeText(this@NotificacoesGestorActivity, "Nenhuma notificação encontrada.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@NotificacoesGestorActivity, R.string.toast_nenhuma_notificacao, Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this@NotificacoesGestorActivity, "Erro ao carregar notificações: ${response.code()}", Toast.LENGTH_SHORT).show()

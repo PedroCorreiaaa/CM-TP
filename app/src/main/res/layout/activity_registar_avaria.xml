@@ -79,7 +79,7 @@
             android:id="@+id/btnAddFoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adicionar Foto"
+            android:text="@string/btn_adicionar_foto"
             android:layout_marginBottom="8dp"/>
 
         <ImageView

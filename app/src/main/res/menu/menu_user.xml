@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_logout"
-        android:title="Terminar Sessão"
+        android:title="@string/btn_terminar_sessao"
         android:icon="@drawable/ic_logout" />
 </menu>

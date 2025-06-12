@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import pt.techcare.app.R
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.repository.AvariaRepository
@@ -47,7 +48,7 @@ class RegistarAvariaActivity : AppCompatActivity() {
             val descricao = binding.etDescricao.text.toString().trim()
 
             if (equipamento.isBlank() || localizacao.isBlank() || descricao.isBlank()) {
-                Toast.makeText(this, "Preencha todos os campos obrigatórios", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_preencha_campos, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -71,13 +72,17 @@ class RegistarAvariaActivity : AppCompatActivity() {
                                 val body = MultipartBody.Part.createFormData("imagem", "avaria_$avariaId.jpg", requestFile)
                                 avariaRepository.uploadImagem(avariaId!!, body)
                             } else {
-                                Toast.makeText(this@RegistarAvariaActivity, "Erro ao carregar a imagem.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@RegistarAvariaActivity, R.string.toast_erro_carregar_imagem, Toast.LENGTH_SHORT).show()
                             }
                         }
-                        Toast.makeText(this@RegistarAvariaActivity, "Avaria registada com sucesso", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@RegistarAvariaActivity, R.string.toast_avaria_criada, Toast.LENGTH_LONG).show()
                         finish()
                     } else {
-                        Toast.makeText(this@RegistarAvariaActivity, "Erro ao registar avaria: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegistarAvariaActivity,
+                            getString(R.string.erro_registar_avaria, response.code()),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } catch (e: Exception) {
                     Toast.makeText(this@RegistarAvariaActivity, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()

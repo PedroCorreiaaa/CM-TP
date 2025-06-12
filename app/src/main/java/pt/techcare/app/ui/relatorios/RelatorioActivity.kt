@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import pt.techcare.app.R
 import pt.techcare.app.databinding.ActivityRelatorioBinding
 import pt.techcare.app.viewmodel.RelatorioViewModel
 
@@ -24,12 +25,13 @@ class RelatorioActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.estatisticas.collectLatest { estat ->
                 estat?.let {
-                    binding.txtTotalAvarias.text = "Total: ${it.total_avarias}"
-                    binding.txtResolvidas.text = "Resolvidas: ${it.resolvidas}"
-                    binding.txtTempoMedio.text = "Tempo médio: ${it.tempo_medio_dias} dias"
+                    binding.txtTotalAvarias.text = getString(R.string.hint_total_avarias, it.total_avarias)
+                    binding.txtResolvidas.text = getString(R.string.text_avarias_resolvidas, it.resolvidas)
+                    binding.txtTempoMedio.text = getString(R.string.text_tempo_medio, it.tempo_medio_dias.toString())
                 }
             }
         }
+
 
         viewModel.carregarEstatisticas()
 
@@ -39,7 +41,7 @@ class RelatorioActivity : AppCompatActivity() {
             val localizacaoFiltro = binding.inputLocalizacao.text.toString().trim()
 
             if (datasFiltro.isEmpty() && tipoEquipamentoFiltro.isEmpty() && localizacaoFiltro.isEmpty()) {
-                Toast.makeText(this, "Por favor, preencha pelo menos um filtro para aplicar.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_filtro, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -48,7 +50,7 @@ class RelatorioActivity : AppCompatActivity() {
 
 
         binding.btnVerDetalhes.setOnClickListener {
-            Toast.makeText(this, "Funcionalidade de ver detalhes ainda não implementada", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_funcionalidade_nao_implementada, Toast.LENGTH_SHORT).show()
         }
     }
 }

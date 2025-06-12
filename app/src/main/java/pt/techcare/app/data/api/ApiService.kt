@@ -5,8 +5,6 @@ import pt.techcare.app.data.model.AtribuirTecnicoRequest
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.model.AvariaUpdateRequest
-import pt.techcare.app.data.model.Comentario
-import pt.techcare.app.data.model.ComentarioRequest
 import pt.techcare.app.data.model.LoginRequest
 import pt.techcare.app.data.model.LoginResponse
 import pt.techcare.app.data.model.Notificacao
@@ -47,15 +45,6 @@ interface ApiService {
 
     @GET("api/avarias/{id}")
     suspend fun getAvariaById(@Path("id") idAvaria: Int): Response<Avaria>
-
-    @GET("api/avarias/{id}/comentarios")
-    suspend fun getComentarios(@Path("id") idAvaria: Int): Response<List<Comentario>>
-
-    @POST("api/avarias/{id}/comentarios")
-    suspend fun enviarComentario(
-        @Path("id") idAvaria: Int,
-        @Body request: ComentarioRequest
-    ): Response<Void>
 
     @POST("api/avarias/{id}/tecnico")
     suspend fun atribuirTecnico(

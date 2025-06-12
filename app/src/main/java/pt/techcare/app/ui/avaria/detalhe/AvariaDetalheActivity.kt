@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import pt.techcare.app.R
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.repository.AvariaRepository
@@ -98,7 +99,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
                         } else {
                             if (sessionManager.getUserType() == 2) {
                                 binding.btnAlterarEstado.visibility = View.VISIBLE
-                                binding.btnAlterarEstado.text = "Assinalar como Resolvida"
+                                binding.btnAlterarEstado.text = R.string.btn_asinalar_resolvida.toString()
                                 binding.btnAlterarEstado.setOnClickListener {
                                     mostrarDialogoAssinalarResolvida()
                                 }
@@ -122,7 +123,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
         binding.txtDescricao.text = avaria.descricao ?: "Sem descrição"
         binding.txtEstado.text = avaria.estado?.descricao ?: "Sem estado"
         binding.txtTipoEquipamento.text = avaria.descricao_equipamento ?: "Sem equipamento"
-        binding.txtSolicitacao.text = avaria.resolucao ?: "Sem solicitação"
+        binding.txtSolicitacao.text = avaria.resolucao ?: "Por resolver"
         val prioridadeIndex = when (avaria.grau_urgencia) {
             "Baixa" -> 0
             "Média" -> 1
@@ -170,22 +171,22 @@ class AvariaDetalheActivity : AppCompatActivity() {
 
     private fun mostrarDialogoAssinalarResolvida() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Assinalar como Resolvida")
+        builder.setTitle(R.string.btn_asinalar_resolvida)
 
         val input = EditText(this)
-        input.hint = "Insira a resolução"
+        input.hint = R.string.hint_inserir_resolucao.toString()
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setView(input)
 
-        builder.setPositiveButton("Confirmar") { _, _ ->
+        builder.setPositiveButton(R.string.btn_confirmar) { _, _ ->
             val resolucao = input.text.toString().trim()
             if (resolucao.isNotEmpty()) {
                 atualizarEstadoAvaria(2, resolucao)
             } else {
-                Toast.makeText(this@AvariaDetalheActivity, "A resolução não pode estar vazia.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AvariaDetalheActivity, R.string.toast_erro_resolucao, Toast.LENGTH_SHORT).show()
             }
         }
-        builder.setNegativeButton("Cancelar", null)
+        builder.setNegativeButton(R.string.btn_cancelar, null)
         builder.show()
     }
 
@@ -195,10 +196,10 @@ class AvariaDetalheActivity : AppCompatActivity() {
                 val idResponsavel = sessionManager.getUserId() ?: -1
                 val sucesso = viewModel.atualizarAvaria(idAvaria, mapOf("id_estado_avaria" to novoEstado, "resolucao" to resolucao), idResponsavel)
                 if (sucesso) {
-                    Toast.makeText(this@AvariaDetalheActivity, "Avaria assinalada como resolvida!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AvariaDetalheActivity, R.string.toast_avaria_resolvida, Toast.LENGTH_SHORT).show()
                     carregarDetalhesAvaria(idAvaria)
                 } else {
-                    Toast.makeText(this@AvariaDetalheActivity, "Erro ao assinalar como resolvida.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AvariaDetalheActivity, R.string.toast_erro_avaria_resolvida, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Log.e("AvariaDetalhe", "Erro ao atualizar estado: ${e.message}")

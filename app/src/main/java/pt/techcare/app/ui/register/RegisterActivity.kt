@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import pt.techcare.app.R
 import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.RegisterRequest
 import pt.techcare.app.databinding.ActivityRegisterBinding
@@ -44,7 +45,6 @@ class RegisterActivity : AppCompatActivity() {
                                         Toast.makeText(this@RegisterActivity, registerResponse.message, Toast.LENGTH_SHORT).show()
                                         finish()
                                     } else {
-                                        // Caso a API retorne sucesso = false
                                         Toast.makeText(this@RegisterActivity, registerResponse.message, Toast.LENGTH_SHORT).show()
                                     }
                                 } else {
@@ -62,10 +62,10 @@ class RegisterActivity : AppCompatActivity() {
 
 
                 } else {
-                    Toast.makeText(this, "As palavras-passe não coincidem", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.toast_match_passwords, Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_preencha_campos, Toast.LENGTH_SHORT).show()
             }
         }
     }

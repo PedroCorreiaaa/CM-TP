@@ -38,7 +38,7 @@
             android:id="@+id/tituloRelatorios"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Relatórios de Avarias"
+            android:text="@string/titulo_relatorios"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginBottom="4dp" />
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Visualize estatísticas e as tendências sobre as avarias"
+            android:text="@string/sub_titulo_relatorios"
             android:textSize="14sp"
             android:layout_marginBottom="16dp" />
 
@@ -63,7 +63,7 @@
             android:id="@+id/txtResolvidas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resolvidas: 0"
+            android:text="@string/text_avarias_resolvidas"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -72,7 +72,7 @@
             android:id="@+id/txtTempoMedio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tempo médio: 0 dias"
+            android:text="@string/text_tempo_medio"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
@@ -102,7 +102,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Datas"
+                    android:text="@string/hint_datas"
                     android:layout_marginStart="8dp"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -111,7 +111,7 @@
                 android:id="@+id/inputDatas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Insira o intervalo de datas"
+                android:hint="@string/hint_inserir_datas"
                 android:inputType="text"
                 android:padding="8dp"
                 android:background="@android:drawable/edit_text"
@@ -133,7 +133,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tipo de equipamento"
+                    android:text="@string/hint_tipo_equipamento"
                     android:layout_marginStart="8dp"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -142,7 +142,7 @@
                 android:id="@+id/inputTipoEquipamento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Insira o tipo de equipamento"
+                android:hint="@string/hint_inserir_tipo_equipamento"
                 android:inputType="text"
                 android:padding="8dp"
                 android:background="@android:drawable/edit_text"
@@ -164,7 +164,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Localização"
+                    android:text="@string/hint_localizacao"
                     android:layout_marginStart="8dp"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -173,7 +173,7 @@
                 android:id="@+id/inputLocalizacao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Insira a localização"
+                android:hint="@string/hint_inserir_localizacao"
                 android:inputType="text"
                 android:padding="8dp"
                 android:background="@android:drawable/edit_text"
@@ -183,7 +183,7 @@
                 android:id="@+id/btnFiltrar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Filtrar"
+                android:text="@string/btn_filtrar"
                 android:backgroundTint="@color/primary"
                 android:textColor="@android:color/white"
                 android:layout_marginTop="8dp" />
@@ -202,7 +202,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Exportar PDF"
+                android:text="@string/btn_exportar_pdf"
                 android:backgroundTint="@color/cinza_claro"
                 android:textColor="@android:color/white" />
 
@@ -215,7 +215,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ver Detalhes"
+                android:text="@string/btn_detalhes"
                 android:backgroundTint="@color/primary"
                 android:textColor="@android:color/white" />
         </LinearLayout>

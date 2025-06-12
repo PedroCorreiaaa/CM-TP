@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Descrição:"
+            android:text="@string/hint_descricao_avaria"
             android:textStyle="bold"
             android:layout_marginTop="16dp" />
 
@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Estado:"
+            android:text="@string/hint_estado_avaria"
             android:textStyle="bold" />
 
         <TextView
@@ -66,7 +66,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo de Equipamento:"
+            android:text="@string/hint_tipo_equipamento"
             android:textStyle="bold" />
 
         <TextView
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resolução:"
+            android:text="@string/hint_resolucao"
             android:textStyle="bold" />
 
         <TextView
@@ -93,7 +93,7 @@
             android:id="@+id/btnAlterarTecnico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Alterar técnico"
+            android:text="@string/btn_alterar_tecnico"
             android:background="@drawable/button_blue"
             android:textColor="@android:color/white"
             android:layout_marginBottom="16dp" />
@@ -102,7 +102,7 @@
             android:id="@+id/btnAlterarEstado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Alterar Estado"
+            android:text="@string/hint_alterar_estado"
             android:background="@drawable/button_blue"
             android:textColor="@android:color/white"
             android:layout_marginBottom="16dp" />
