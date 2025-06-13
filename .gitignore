@@ -26,4 +26,4 @@ out/
 .cache/
 *.tmp
 
-.techcare-api/.env
+.env
