@@ -63,7 +63,7 @@ class MonitorizarAvariaActivity : AppCompatActivity() {
 
         if (lista.isEmpty()) {
             val textoVazio = TextView(this).apply {
-                text = R.string.hint_sem_resultados.toString()
+                text = getString(R.string.hint_sem_resultados)
                 textSize = 16f
                 gravity = Gravity.CENTER
                 setTextColor(resources.getColor(R.color.texto_secundario))

@@ -99,7 +99,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
                         } else {
                             if (sessionManager.getUserType() == 2) {
                                 binding.btnAlterarEstado.visibility = View.VISIBLE
-                                binding.btnAlterarEstado.text = R.string.btn_asinalar_resolvida.toString()
+                                binding.btnAlterarEstado.setText(R.string.btn_asinalar_resolvida)
                                 binding.btnAlterarEstado.setOnClickListener {
                                     mostrarDialogoAssinalarResolvida()
                                 }
@@ -174,7 +174,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
         builder.setTitle(R.string.btn_asinalar_resolvida)
 
         val input = EditText(this)
-        input.hint = R.string.hint_inserir_resolucao.toString()
+        input.hint = getString(R.string.hint_inserir_resolucao)
         input.inputType = InputType.TYPE_CLASS_TEXT
         builder.setView(input)
 
