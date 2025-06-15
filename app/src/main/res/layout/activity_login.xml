@@ -57,7 +57,7 @@
             android:textSize="14sp"
             android:layout_marginTop="12dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -66,6 +66,8 @@
             android:textColor="@android:color/white"
             android:layout_marginTop="24dp"
             android:background="@drawable/button_blue" />
+
+
 
     </LinearLayout>
 </ScrollView>

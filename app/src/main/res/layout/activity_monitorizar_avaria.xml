@@ -47,12 +47,11 @@
             android:paddingStart="12dp"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnFiltrar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_filtrar"
-            android:drawableStart="@drawable/ic_monitor_blue"
             android:background="@drawable/button_blue"
             android:textColor="@android:color/white"
             android:paddingHorizontal="16dp"

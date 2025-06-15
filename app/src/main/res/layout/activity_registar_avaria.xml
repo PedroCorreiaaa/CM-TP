@@ -64,7 +64,7 @@
             android:paddingHorizontal="12dp"
             android:layout_marginBottom="8dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSubmeter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,11 +75,13 @@
             android:paddingHorizontal="12dp"
             android:layout_marginBottom="8dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnAddFoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:text="@string/btn_adicionar_foto"
+            android:background="@drawable/button_blue"
             android:layout_marginBottom="8dp"/>
 
         <ImageView
