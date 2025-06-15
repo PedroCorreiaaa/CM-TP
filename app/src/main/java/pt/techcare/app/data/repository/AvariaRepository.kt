@@ -5,6 +5,7 @@ import pt.techcare.app.data.api.ApiService
 import pt.techcare.app.data.model.AtribuirTecnicoRequest
 import pt.techcare.app.data.model.AvariaRequest
 import pt.techcare.app.data.model.AvariaUpdateRequest
+import pt.techcare.app.data.model.RegisterRequest
 
 class AvariaRepository(private val api: ApiService) {
     suspend fun getAvarias() = api.getAvarias()
@@ -15,6 +16,6 @@ class AvariaRepository(private val api: ApiService) {
     suspend fun atribuirTecnico(idAvaria: Int, idTecnico: Int) = api.atribuirTecnico(idAvaria, AtribuirTecnicoRequest(idTecnico))
     suspend fun atualizarAvaria(idAvaria: Int, campos: AvariaUpdateRequest) = api.atualizarAvaria(idAvaria, campos)
     suspend fun getTecnicos() = api.getTecnicos()
-    suspend fun registrarTecnico(nome: String, email: String, password: String) = api.registrarTecnico(nome, email, password)
+    suspend fun registrarTecnico(nome: String, email: String, password: String) = api.registrarTecnico(RegisterRequest( nome, email, password))
     suspend fun getNotificacoes(id: Int) = api.getNotificacoes(id)
 }
