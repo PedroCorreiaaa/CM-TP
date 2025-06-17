@@ -33,8 +33,8 @@ class SelecionarTecnicoActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySelecionarTecnicoBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState) //Chama a implementação da superclasse
+        binding = ActivitySelecionarTecnicoBinding.inflate(layoutInflater) //Inicializa o View Binding
         setContentView(binding.root)
 
         viewModel = AvariaViewModel()

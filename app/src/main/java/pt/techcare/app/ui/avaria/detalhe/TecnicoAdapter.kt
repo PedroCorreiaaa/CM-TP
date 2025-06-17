@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import pt.techcare.app.data.model.User
 
+//Mostrar uma lista de técnicos,Reagir quando o utilizador clica num técnico e Atualizar dinamicamente essa lista.
 class TecnicoAdapter(
     private var tecnicos: List<User>,
     private val onTecnicoSelected: (User) -> Unit

@@ -16,6 +16,7 @@ class NotificacaoAdapter(
     private val onItemClick: (Notificacao) -> Unit
 ) : RecyclerView.Adapter<NotificacaoAdapter.NotificacaoViewHolder>() {
 
+    // Atualiza a lista de notificações
     fun updateList(newNotificacoes: List<Notificacao>) {
         notificacoes = newNotificacoes.toList()
         notifyDataSetChanged()
@@ -39,11 +40,14 @@ class NotificacaoAdapter(
         private val tvData: TextView = itemView.findViewById(R.id.tvData)
         private val tvTipo: TextView = itemView.findViewById(R.id.tvTipo)
 
+        // Liga os dados da notificação ao layout
         fun bind(notificacao: Notificacao) {
             tvMensagem.text = notificacao.mensagem
+
             val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.getDefault())
             val dateTime = LocalDateTime.parse(notificacao.data_emissao, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
             tvData.text = dateTime.format(formatter)
+
             tvTipo.text = notificacao.tipo
         }
     }

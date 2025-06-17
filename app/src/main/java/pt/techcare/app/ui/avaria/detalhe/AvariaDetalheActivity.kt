@@ -19,7 +19,6 @@ import pt.techcare.app.data.api.ApiClient
 import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.repository.AvariaRepository
 import pt.techcare.app.databinding.ActivityAvariaDetalheBinding
-import pt.techcare.app.ui.avaria.detalhe.SelecionarTecnicoActivity
 import pt.techcare.app.util.SessionManager
 import pt.techcare.app.viewmodel.AvariaViewModel
 
@@ -46,11 +45,12 @@ class AvariaDetalheActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPrioridade.adapter = adapter
 
+        // Ativa edição de prioridade apenas para gestores
         if (sessionManager.getUserType() == 3) {
             spinnerPrioridade.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                     val prioridadeSelecionada = prioridades[position]
-                    atualizarPrioridade(prioridadeSelecionada)
+                    atualizarPrioridade(prioridadeSelecionada) // Atualiza prioridade selecionada
                 }
                 override fun onNothingSelected(parent: AdapterView<*>) {}
             }
@@ -58,6 +58,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
             spinnerPrioridade.isEnabled = false
         }
 
+        // Exibe as opcoes apenas para gestores
         val userType = sessionManager.getUserType()
         if (userType == 3) {
             binding.btnAlterarTecnico.visibility = View.VISIBLE
@@ -91,7 +92,6 @@ class AvariaDetalheActivity : AppCompatActivity() {
                         preencherDetalhes(avaria)
 
                         val estadoResolvido = avaria.estado?.id_estado_avaria == 2
-
                         if (estadoResolvido) {
                             binding.txtPrioridade.isEnabled = false
                             binding.btnAlterarTecnico.isEnabled = false
@@ -137,7 +137,6 @@ class AvariaDetalheActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val idResponsavel = sessionManager.getUserId() ?: -1
-                Log.d("AvariaDetalhe", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $tecnicoId, idResponsavel: $idResponsavel")
                 val sucesso = viewModel.atribuirTecnico(idAvaria, tecnicoId, idResponsavel)
                 if (sucesso) {
                     Toast.makeText(this@AvariaDetalheActivity, "Técnico atribuído com sucesso!", Toast.LENGTH_SHORT).show()
@@ -212,7 +211,7 @@ class AvariaDetalheActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             val idTecnico: Int? = data?.getIntExtra("id_tecnico", -1)
-            if (idTecnico != null && idTecnico != -1) {
+            if (idTecnico != null && idTecnico != -1) { //Se recebeu um ID válido chama a função
                 Log.d("AvariaDetalhe", "Recebido idTecnico: $idTecnico")
                 atribuirTecnico(idTecnico)
             } else {

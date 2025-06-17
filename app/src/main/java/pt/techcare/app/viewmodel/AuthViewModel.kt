@@ -8,11 +8,14 @@ import kotlinx.coroutines.launch
 import pt.techcare.app.data.model.LoginResponse
 import pt.techcare.app.data.repository.AuthRepository
 
+// ViewModel responsável pela lógica de autenticação (login e registo)
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
+    // Estado observável que guarda a resposta do login ou registo
     private val _loginState = MutableStateFlow<LoginResponse?>(null)
     val loginState: StateFlow<LoginResponse?> = _loginState
 
+    // Função para efetuar login com email e password
     fun login(email: String, password: String) {
         viewModelScope.launch {
             val response = repository.login(email, password)
@@ -24,15 +27,6 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                     message = "Erro ao conectar",
                     user = null
                 )
-            }
-        }
-    }
-
-    fun register(nome: String, email: String, password: String) {
-        viewModelScope.launch {
-            val response = repository.register(nome, email, password)
-            if (response.isSuccessful) {
-                _loginState.value = response.body()
             }
         }
     }

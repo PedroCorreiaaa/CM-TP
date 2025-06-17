@@ -3,6 +3,7 @@ package pt.techcare.app.util
 import android.content.Context
 import android.content.SharedPreferences
 
+// Classe responsável por gerir a sessão do do utilizador com SharedPreferences
 class SessionManager(context: Context) {
 
     private val prefs: SharedPreferences =

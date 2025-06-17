@@ -11,12 +11,15 @@ import pt.techcare.app.data.model.Avaria
 import pt.techcare.app.data.model.AvariaUpdateRequest
 import pt.techcare.app.data.repository.AvariaRepository
 
+// ViewModel responsável pela lógica relacionada a avarias
 class AvariaViewModel : ViewModel() {
     private val repository = AvariaRepository(ApiClient.apiService)
 
+    // Fluxo de estado com a lista de avarias atualizadas
     private val _avarias = MutableStateFlow<List<Avaria>>(emptyList())
     val avarias: StateFlow<List<Avaria>> = _avarias
 
+    // Carrega as avarias conforme o tipo de utilizador
     fun carregarAvarias(userType: Int, userId: Int) {
         viewModelScope.launch {
             val response = when (userType) {
@@ -34,15 +37,16 @@ class AvariaViewModel : ViewModel() {
         }
     }
 
+    // Atribui técnico à avaria e muda o estado para "Em progresso"
     suspend fun atribuirTecnico(idAvaria: Int, idUtilizador: Int, idResponsavel: Int): Boolean {
         try {
             Log.d("AvariaViewModel", "Atribuindo técnico. idAvaria: $idAvaria, idUtilizador: $idUtilizador")
             val response = repository.atribuirTecnico(idAvaria, idUtilizador)
             if (response.isSuccessful) {
-                Log.d("AvariaViewModel", "Técnico atribuído com sucesso. Response: ${response.body()}")
-                
+                Log.d("AvariaViewModel", "Técnico atribuído com sucesso.")
+
                 val updateRequest = AvariaUpdateRequest(
-                    id_estado_avaria = 3,
+                    id_estado_avaria = 3, // Estado: "Em progresso"
                     grau_urgencia = null,
                     id_responsavel = idResponsavel
                 )
@@ -51,11 +55,11 @@ class AvariaViewModel : ViewModel() {
                     Log.d("AvariaViewModel", "Estado atualizado para 'Em progresso'")
                     return true
                 } else {
-                    Log.e("AvariaViewModel", "Erro ao atualizar estado: ${updateResponse.code()} - ${updateResponse.message()}")
+                    Log.e("AvariaViewModel", "Erro ao atualizar estado: ${updateResponse.code()}")
                     return false
                 }
             } else {
-                Log.e("AvariaViewModel", "Erro na API: ${response.code()} - ${response.message()}")
+                Log.e("AvariaViewModel", "Erro ao atribuir técnico: ${response.code()}")
                 return false
             }
         } catch (e: Exception) {
@@ -64,6 +68,7 @@ class AvariaViewModel : ViewModel() {
         }
     }
 
+    // Atualiza campos da avaria (estado, urgência, resolução, responsável)
     suspend fun atualizarAvaria(idAvaria: Int, campos: Map<String, Any>, idResponsavel: Int): Boolean {
         try {
             Log.d("AvariaViewModel", "Atualizando avaria. idAvaria: $idAvaria, campos: $campos")

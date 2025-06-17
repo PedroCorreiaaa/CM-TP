@@ -64,6 +64,7 @@ class RegistarAvariaActivity : AppCompatActivity() {
                     val response = avariaRepository.registarAvaria(novaAvaria)
                     if (response.isSuccessful) {
                         val avariaId = response.body()?.id_avaria
+                        //le imagem, converte e envia a imagem
                         selectedImageUri?.let { uri ->
                             val stream = contentResolver.openInputStream(uri)
                             val bytes = stream?.readBytes()

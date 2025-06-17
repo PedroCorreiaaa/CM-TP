@@ -18,6 +18,8 @@ class NotificacoesTecnicoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificacoesBinding
     private val avariaRepository = AvariaRepository(ApiClient.apiService)
     private lateinit var sessionManager: SessionManager
+
+    // Adapter da lista de notificações com ação ao clicar
     private val notificacaoAdapter = NotificacaoAdapter(emptyList()) { notificacao ->
         Toast.makeText(this, "Clicou em: ${notificacao.mensagem}", Toast.LENGTH_SHORT).show()
     }
@@ -29,12 +31,14 @@ class NotificacoesTecnicoActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
+        // Configura o RecyclerView com layout vertical e o adapter
         binding.recyclerNotificacoes.layoutManager = LinearLayoutManager(this)
         binding.recyclerNotificacoes.adapter = notificacaoAdapter
 
         carregarNotificacoes()
     }
 
+    // Carrega notificações da API e filtra apenas as do utilizador atual
     private fun carregarNotificacoes() {
         val userId = sessionManager.getUserId() ?: return
         lifecycleScope.launch {

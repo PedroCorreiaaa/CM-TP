@@ -58,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        //verifica se o login foi sucedido e guarda os dados em sharedpreference
         lifecycleScope.launchWhenStarted {
             viewModel.loginState.collectLatest { response ->
                 response?.let {
